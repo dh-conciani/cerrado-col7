@@ -1,7 +1,7 @@
 
 # Changelog <br>
 ## 1_stablePixels:
-  * Inclusion of the CAR database (Tocantins state)
-  * Revison in the rules of the São Paulo state 
-  * Update in the PRODES deforestation database (from 2000 to 2021) 
-  * Exclusion of PROBIO database as reference for NV 
+  * Inclusion of CAR's thematic base for the State of Tocantins 
+  * Revision in the filtering rules for the State of São Paulo 
+  * Update of the PRODES deforestation database (2000 to 2021) 
+  * Removal of PROBIO data as a basis for native vegetation 
