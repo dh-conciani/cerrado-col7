@@ -1,6 +1,7 @@
 
-#changelog (draft) <br>
-1_stablePixels:
-  * inclusion of CAR-TO (wetlands)
-  * revison of rules into SP state 
-  * exclusion of probio as filter 
+## Changelog <br>
+# 1_stablePixels:
+  * Inclusion of the CAR database (Tocantins state)
+  * Revison in the rules of the São Paulo state 
+  * Update in the PRODES deforestation database (from 2000 to 2021) 
+  * Exclusion of PROBIO database as reference for NV 
