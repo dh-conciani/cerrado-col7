@@ -24,7 +24,7 @@ values.forEach(function(value_i) {
                           description: 'reg_' + String(value_i),
                           assetId: output + 'reg_' + String(value_i),
                           region: region_i_vec,
-                          scale:60,
+                          scale:30,
                           maxPixels:1e13
                           });
                         }
