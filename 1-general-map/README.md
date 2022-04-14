@@ -8,3 +8,6 @@
 
 ## 2_computeProportion:
   * Code structure optmization. Inclusion of .map functions instead repetition 
+
+## 3_createPoints:
+  * Code structure optmization. Inclusion of .map functions instead repetition 
