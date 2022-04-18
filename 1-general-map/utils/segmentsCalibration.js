@@ -21,7 +21,9 @@ var cerrado_extent = ee.Geometry.Polygon(
 
 // import datasets 
 // stable samples 
-var stable_pixels = ee.Image('users/dh-conciani/collection7/masks/cerrado_stablePixels_1985_2020_v1');
+var stable_pixels = ee.Image('users/dh-conciani/collection7/masks/cerrado_stablePixels_1985_2020_v1')
+                      .remap([3, 4, 5, 11, 12, 29, 15, 39, 20, 40, 41, 46, 47, 48, 21, 23, 24, 30, 25, 33, 31],
+                             [3, 4, 3, 12, 12, 25, 15, 19, 19, 19, 19, 19, 19, 19, 21, 25, 25, 25, 25, 33, 33]);
 
 // color ramp module from mapbiomas 
 var vis = {
@@ -34,7 +36,7 @@ var vis = {
 var mapbiomas = stable_pixels.updateMask(carta_mask.eq(0));
 
 // sample points (un-filtered)
-var sample_points = ee.FeatureCollection('users/dh-conciani/collection7/sample/points/samplePoints_v1')
+var sample_points = ee.FeatureCollection('users/dh-conciani/collection7/sample/points/samplePoints_v2')
                       .filterBounds(geometry);
                       print ('number of sample points: ', sample_points.size());
 
@@ -166,8 +168,8 @@ Map.addLayer(selectedSegmentsValidated, vis, 'validated segments', false);
 var newSamples = selectedSegmentsValidated
     .sample({
         region: landsat.geometry(),
-        scale: 10,
-        factor: 0.01, // select 1% of the validated pixels as new samples
+        scale: 30,
+        factor: 0.022, // select 2.2% of the validated pixels as new samples
         dropNulls: true,
         geometries: true
     });
