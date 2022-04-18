@@ -1,4 +1,4 @@
-## filter outliers from stable samples by using segmentation and percentil reducer
+## filter outliers from stable samples by using segmentation, percentil reducer and sorting new samples
 ## for any issue or bug, write to dhemerson.costa@ipam.org.br and/or wallace.silva@ipam.org.br
 ## mapbiomas collection 7
 
@@ -15,23 +15,19 @@ segment_bands = ["blue_median", "green_median", "red_median", "nir_median", "swi
 dirout = 'users/dh-conciani/collection7/sample/filtered_points/byCarta/';
 
 ## define output version
-version = '1';
+version = '2';
 
 ##  import datasets 
 ##  stable samples from collection 6.0 
-stable_pixels = ee.Image('users/dh-conciani/collection7/masks/cerrado_stablePixels_1985_2020_v1');
+stable_pixels = ee.Image('users/dh-conciani/collection7/masks/cerrado_stablePixels_1985_2020_v1')\
+     .remap([3, 4, 5, 11, 12, 29, 15, 39, 20, 40, 41, 46, 47, 48, 21, 23, 24, 30, 25, 33, 31],\
+            [3, 4, 3, 12, 12, 25, 15, 19, 19, 19, 19, 19, 19, 19, 21, 25, 25, 25, 25, 33, 33]);
 
 ## mapbiomas classification
-mapbiomas = ee.Image('projects/mapbiomas-workspace/public/collection6/mapbiomas_collection60_integration_v1')\
-    .select('classification_2020')\
-    .remap(
-        [3, 4, 5, 11, 12, 29, 15, 39, 20, 40, 41, 46, 47, 48, 21, 23, 24, 30, 25, 33, 31],\
-        [3, 4, 3, 11, 12, 25, 15, 19, 19, 19, 19, 19, 19, 19, 21, 25, 25, 25, 25, 33, 33]\
-    )\
-    .rename('classification_2020');
+mapbiomas = stable_pixels
 
 ## unfiltered sample points (generated from stable pixels)
-sample_points = ee.FeatureCollection('users/dh-conciani/collection7/sample/points/samplePoints_v1');
+sample_points = ee.FeatureCollection('users/dh-conciani/collection7/sample/points/samplePoints_v2');
 
 ## landsat mosaic for the year of 2020 
 landsat = ee.ImageCollection('projects/nexgenmap/MapBiomas2/LANDSAT/BRAZIL/mosaics-2')\
@@ -101,11 +97,11 @@ for carta_i in summary:
     
     ## create segments
     segments = getSegments(image= landsat_i.select(segment_bands),
-                           size= 25,
+                           size= 12,
                            compactness= 1,
                            connectivity= 8,
-                           neighborhoodSize= 50 #(2 * size)
-                           ).reproject('EPSG:4326', None, 10);  
+                           neighborhoodSize= 24 #(2 * size)
+                           ).reproject('EPSG:4326', None, 30);  
     
     ## define function to select only segments that overlaps sample points
     def selectSegments (properties, scale, segments_i, validateMap, samples):
@@ -142,7 +138,7 @@ for carta_i in summary:
                                       );    
   
     ## mask and rename 
-    selectedSegments = selectedSegments.selfMask().rename(['class']);     
+    selectedSegments = selectedSegments.selfMask().rename(['reference']);     
     
     ## create percentil rule (crashes here - needs to select all classes, not only forest)
     percentil = segments.addBands(mapbiomas_i).reduceConnectedComponents(ee.Reducer.percentile([5, 95]), 'segments');
@@ -151,7 +147,7 @@ for carta_i in summary:
     validated = percentil.select(0).multiply(percentil.select(0).eq(percentil.select(1)));  
     
     ## mask and rename 
-    selectedSegmentsValidated = selectedSegments.mask(selectedSegments.eq(validated)).rename('class');
+    selectedSegmentsValidated = selectedSegments.mask(selectedSegments.eq(validated)).rename('reference');
     
     ## define function to generate new samples based on validated segments
     def getNewSamples (image, extent):
@@ -160,7 +156,7 @@ for carta_i in summary:
             .sample(
                 region= extent.geometry(),
                 scale= 30,
-                factor= 0.01, 
+                factor= 0.022, # select 2.2% of the validated pixels as new samples
                 seed= 1,
                 dropNulls= True, 
                 geometries= True 
@@ -180,5 +176,4 @@ for carta_i in summary:
     ## export
     task.start()
     print ('done! ======================= > next')
-    ## @ end of for @ ##
-    
+    ## @ end of for @ ##  
