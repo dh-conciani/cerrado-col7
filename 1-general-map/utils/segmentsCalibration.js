@@ -2,7 +2,7 @@
 // dhemerson.costa@ipam.org.br
 
 var cartas = ee.FeatureCollection('projects/mapbiomas-workspace/AUXILIAR/cartas');
-var geometry = cartas.filterMetadata('grid_name', 'equals', 'SF-23-Y-A');
+var geometry = cartas.filterMetadata('grid_name', 'equals', 'SD-23-Y-C');
 var carta_mask = ee.Image(0).mask(0).paint(geometry);
     
 
