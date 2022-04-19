@@ -15,19 +15,19 @@ segment_bands = ["blue_median", "green_median", "red_median", "nir_median", "swi
 dirout = 'users/dh-conciani/collection7/sample/filtered_points/byCarta/';
 
 ## define output version
-version = '2';
+version = '3';
 
 ##  import datasets 
 ##  stable samples from collection 6.0 
 stable_pixels = ee.Image('users/dh-conciani/collection7/masks/cerrado_stablePixels_1985_2020_v1')\
-     .remap([3, 4, 5, 11, 12, 29, 15, 39, 20, 40, 41, 46, 47, 48, 21, 23, 24, 30, 25, 33, 31],\
-            [3, 4, 3, 12, 12, 25, 15, 19, 19, 19, 19, 19, 19, 19, 21, 25, 25, 25, 25, 33, 33]);
+     .remap([3, 4, 5, 11, 12, 29, 15, 19, 39, 20, 40, 41, 46, 47, 48, 21, 23, 24, 30, 25, 33, 31],\
+            [3, 4, 3, 12, 12, 25, 15, 19, 19, 19, 19, 19, 19, 19, 19, 21, 25, 25, 25, 25, 33, 33]);
 
 ## mapbiomas classification
 mapbiomas = stable_pixels
 
 ## unfiltered sample points (generated from stable pixels)
-sample_points = ee.FeatureCollection('users/dh-conciani/collection7/sample/points/samplePoints_v2');
+sample_points = ee.FeatureCollection('users/dh-conciani/collection7/sample/points/samplePoints_v3');
 
 ## landsat mosaic for the year of 2020 
 landsat = ee.ImageCollection('projects/nexgenmap/MapBiomas2/LANDSAT/BRAZIL/mosaics-2')\
@@ -176,4 +176,5 @@ for carta_i in summary:
     ## export
     task.start()
     print ('done! ======================= > next')
-    ## @ end of for @ ##  
+    ## @ end of for @ ##
+    
