@@ -2,7 +2,7 @@
 // dhemerson.costa@ipam.org.br 
 
 // input metadata
-var version = '2';
+var version = '3';
 
 // define classes to be assessed
 var classes = [3, 4, 12, 15, 19, 21, 25, 33];
@@ -24,8 +24,8 @@ var mapbiomas = ee.Image('projects/mapbiomas-workspace/public/collection6/mapbio
                     .select('classification_'+  year);
 
 // reclassify following cerrado strategy 
-mapbiomas = mapbiomas.remap([3, 4, 5, 11, 12, 29, 15, 39, 20, 40, 41, 46, 47, 48, 21, 23, 24, 30, 25, 33, 31],
-                            [3, 4, 3, 12, 12, 25, 15, 19, 19, 19, 19, 19, 19, 19, 21, 25, 25, 25, 25, 33, 33]);
+mapbiomas = mapbiomas.remap([3, 4, 5, 11, 12, 29, 15, 19, 39, 20, 40, 41, 46, 47, 48, 21, 23, 24, 30, 25, 33, 31],
+                            [3, 4, 3, 12, 12, 25, 15, 19, 19, 19, 19, 19, 19, 19, 19, 21, 25, 25, 25, 25, 33, 33]);
 
 // mapbiomas color pallete
 var palettes = require('users/mapbiomas/modules:Palettes.js');
