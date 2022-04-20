@@ -23,10 +23,24 @@ filtered <- ee$FeatureCollection('users/dh-conciani/collection7/sample/filtered_
 ## load classification regions
 regions <- ee$FeatureCollection('users/dh-conciani/collection7/classification_regions/vector')
 
+## set classes to select from validation dataset
+selectClasses = c(
+  "Rio, Lago e Oceano",
+  "Formação Savânica",
+  "Formação Florestal",
+  "Formação Campestre",
+  "Pastagem Cultivada",
+  "Cultura Anual",
+  "Cultura Perene",
+  "Cultura Semi-Perene"
+  ) 
+
 ## load validation points from LAPIG
 validation <- ee$FeatureCollection('projects/mapbiomas-workspace/VALIDACAO/MAPBIOMAS_100K_POINTS_utf8')$
   filterBounds(regions)$
-  filterMetadata('POINTEDITE', 'not_equals', 'true')
+  filterMetadata('POINTEDITE', 'not_equals', 'true')$
+  select('CLASS_2018')$
+  filter(ee$Filter$inList('CLASS_2018', selectClasses))
 
 ## load landsat mosaic
 landsat <- ee$ImageCollection('projects/nexgenmap/MapBiomas2/LANDSAT/BRAZIL/mosaics-2')$
@@ -54,7 +68,13 @@ validation_i <- validation$filterBounds(region_i)
 samples_training <- na.omit(ee_as_sf(landsat$sampleRegions(collection= samples_i,
                                                     scale= 30,
                                                     geometries= TRUE,
-                                                    tileScale= 2), via = 'drive'))
+                                                    tileScale= 2), 
+                                     via = 'drive'))
+
+## insert metadata
+samples_training$file <- 'original'
+#$ remove mapb column
+samples_training <- samples_training[-48]
 
 ## if the size of the filtered dataset is greater than 20k, performin sampling (to avoid memory error)
 if (filtered_i$size()$getInfo() > 20000) {
@@ -68,15 +88,39 @@ if (filtered_i$size()$getInfo() > 20000) {
 filtered_training <- na.omit(ee_as_sf(landsat$sampleRegions(collection= filtered_i,
                                                            scale= 30,
                                                            geometries= TRUE,
-                                                           tileScale= 2), via = 'drive'))
+                                                           tileScale= 2), 
+                                      via = 'drive'))
 
+## insert metadata
+filtered_training$file <- 'filtered_raw'
+## remove random column
+filtered_training <- filtered_training[-80]
 
-histogram(as.factor(filtered_training$reference))
-histogram(as.factor(samples_training$reference))
+## extract signature for validation
+validation_signatures <- na.omit(ee_as_sf(landsat$sampleRegions(collection= validation_i,
+                                                                scale= 30,
+                                                                geometries= TRUE,
+                                                                tileScale= 2), via = 'getInfo'))
 
+## merge datasets
+training <- as.data.frame(rbind(samples_training, filtered_training))
+rm(samples_training, filtered_training)
 
+## filter training dataset
+reference_class <- training$reference
+reference_file <- training$file
 
+## remove strings from predictos dataset
+training <- training[- which(colnames(training)== 'reference')]
+training <- training[- which(colnames(training)== 'geometry')]
 
+## for each file
+for(k in 1:length(unique(reference_file))) {
+  print(unique(reference_file)[k])
+}
+
+## subset for the file
+temp_train <- subset(training, file== unique(reference_file)[1])
 
 ## build map
 Map$addLayer(region_i) +
