@@ -6,7 +6,7 @@ var root = 'users/dh-conciani/collection7/sample/filtered_points/byCarta/';
 var output =  'users/dh-conciani/collection7/sample/filtered_points/consolidated/';
 
 // define version of points to consolidate
-var version = '1';
+var version = '3';
 
 // import cerrado feature
 var cerrado = ee.FeatureCollection('projects/mapbiomas-workspace/AUXILIAR/biomas-2019')
@@ -33,6 +33,7 @@ basenames.forEach(function(file_i) {
   // merge into recipe
   recipe = recipe.merge(samples_i);
 });
+
 
 // export as GEE asset
 Export.table.toAsset(recipe,
