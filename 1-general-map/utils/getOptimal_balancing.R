@@ -70,6 +70,7 @@ for (i in 1:length(unique(regions_list))) {
   validation_i <- validation$filterBounds(region_i)
   
   ## extract spectral signatures for the raw dataset 
+  print('extracting raw')
   samples_training <- na.omit(ee_as_sf(landsat$sampleRegions(collection= samples_i,
                                                              scale= 30,
                                                              geometries= TRUE,
@@ -77,7 +78,7 @@ for (i in 1:length(unique(regions_list))) {
                                        via = 'drive'))
   
   ## insert metadata
-  samples_training$file <- 'original'
+  samples_training$file <- 'raw'
   #$ remove mapb column
   samples_training <- samples_training[-48]
   
@@ -89,6 +90,7 @@ for (i in 1:length(unique(regions_list))) {
     ## subset 60% randomly
     filtered_i <- filtered_i$filter(ee$Filter$lt('random', 0.6))
   } 
+  print('extracting filtered')
   ## extract signatures
   filtered_training <- na.omit(ee_as_sf(landsat$sampleRegions(collection= filtered_i,
                                                               scale= 30,
@@ -97,7 +99,7 @@ for (i in 1:length(unique(regions_list))) {
                                         via = 'drive'))
   
   ## insert metadata
-  filtered_training$file <- 'filtered_raw'
+  filtered_training$file <- 'filtered'
   ## remove random column
   filtered_training <- filtered_training[-80]
   
@@ -113,6 +115,7 @@ for (i in 1:length(unique(regions_list))) {
   
   ## for each file
   for(k in 1:length(unique(training$file))) {
+    print(paste0('processing file: ', unique(training$file)[k]))
     ## subset for the file
     temp_train <- subset(training, file== unique(training$file)[k])
     
@@ -125,7 +128,7 @@ for (i in 1:length(unique(regions_list))) {
     temp_train <- temp_train[- which(colnames(temp_train)== 'file')]
     temp_train <- temp_train[- which(colnames(temp_train)== 'geometry')]
     
-    ## create data partition (training 70%)
+    ## create data partition (training 100%)
     trainingRows <- createDataPartition(reference_class, p = 1, list= FALSE)
     
     ## build training dataset
@@ -152,6 +155,7 @@ for (i in 1:length(unique(regions_list))) {
     control <- trainControl(method="repeatedcv", number=5, repeats=3) 
     
     ## train randomForest 
+    print('training randomForest')
     rfModel <- randomForest(trainPredictors, as.factor(trainClasses),
                             ntree= 100,
                             mtry= sqrt(ncol(trainPredictors)),
@@ -180,8 +184,8 @@ for (i in 1:length(unique(regions_list))) {
     toExport <- rbind(melt(result_val$overall), 
                       melt(result_val$byClass[,11]))
     toExport$variable <- row.names(toExport)
-    toExport$balancing <- training$file[k]
-    toExport$mapb <- regions_list[i]
+    toExport$balancing <- unique(training$file)[k]
+    toExport$mapb <- unique(regions_list)[i]
     
     ## insert into recipe
     recipe <- rbind(recipe, toExport)
