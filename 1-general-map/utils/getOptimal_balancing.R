@@ -106,30 +106,58 @@ validation_signatures <- na.omit(ee_as_sf(landsat$sampleRegions(collection= vali
 training <- as.data.frame(rbind(samples_training, filtered_training))
 rm(samples_training, filtered_training)
 
-## filter training dataset
-reference_class <- training$reference
-reference_file <- training$file
-
-## remove strings from predictos dataset
-training <- training[- which(colnames(training)== 'reference')]
-training <- training[- which(colnames(training)== 'geometry')]
-
 ## for each file
-for(k in 1:length(unique(reference_file))) {
-  print(unique(reference_file)[k])
+for(k in 1:length(unique(training$file))) {
+  print(unique(training$file)[k])
 }
 
 ## subset for the file
-temp_train <- subset(training, file== unique(reference_file)[1])
+temp_train <- subset(training, file== unique(training$file)[1])
+
+## filter training dataset
+reference_class <- temp_train$reference
+
+## remove strings from predictos dataset
+temp_train <- temp_train[- which(colnames(temp_train)== 'id')]
+temp_train <- temp_train[- which(colnames(temp_train)== 'reference')]
+temp_train <- temp_train[- which(colnames(temp_train)== 'file')]
+temp_train <- temp_train[- which(colnames(temp_train)== 'geometry')]
+
+## create data partition (training 70%)
+trainingRows <- createDataPartition(reference_class, p = .70, list= FALSE)
+
+## build training dataset
+trainPredictors <- temp_train[trainingRows, ]
+trainClasses <- reference_class[trainingRows]
+
+## build test dataset
+testPredictors <- temp_train[-trainingRows, ]
+testClasses <- reference_class[-trainingRows]
+
+## create repetition estimates
+control <- trainControl(method="repeatedcv", number=5, repeats=3) 
+
+## train randomForest 
+rfModel <- randomForest(trainPredictors, trainClasses,
+                        ntree= 800,
+                        mtry= sqrt(ncol(trainPredictors)),
+                        trControl= control,
+                        preProc = c ("center", "scale"),
+                        type= 'classification',
+                        importance= TRUE)
+
+
+
+
 
 ## build map
-Map$addLayer(region_i) +
-  Map$addLayer(samples_i) +
-  Map$addLayer(filtered_i) +
-  Map$addLayer(validation_i) +
+#Map$addLayer(region_i) +
+#  Map$addLayer(samples_i) +
+#  Map$addLayer(filtered_i) +
+#  Map$addLayer(validation_i) +
   ## visualize mosaic
-  Map$addLayer(landsat, list(bands= c('swir1_median', 'nir_median', 'red_median'),  
-                             gain= c(0.08, 0.06, 0.2),
-                             gamma= 0.85), 'Lansat')
+#  Map$addLayer(landsat, list(bands= c('swir1_median', 'nir_median', 'red_median'),  
+#                             gain= c(0.08, 0.06, 0.2),
+#                             gamma= 0.85), 'Lansat')
 
   
