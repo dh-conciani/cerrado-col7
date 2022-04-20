@@ -58,6 +58,7 @@ samples_training <- na.omit(ee_as_sf(landsat$sampleRegions(collection= samples_i
 
 ## if the size of the filtered dataset is greater than 20k, performin sampling (to avoid memory error)
 if (filtered_i$size()$getInfo() > 20000) {
+  print('size of filtered greater than 20k -> filtering [0.6]')
   ## compute random column
   filtered_i <- filtered_i$randomColumn()
   ## subset 60% randomly
