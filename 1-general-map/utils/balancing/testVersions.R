@@ -84,18 +84,18 @@ for (i in 1:length(unique(regions_list))) {
   
   ## if the size of the filtered dataset is greater than 20k, performin sampling (to avoid memory error)
   if (filtered_i$size()$getInfo() > 40000) {
-    print('size of filtered greater than 40k -> filtering [0.5]')
+    print('size of filtered greater than 40k -> filtering [0.4]')
     ## compute random column
     filtered_i <- filtered_i$randomColumn()
     ## subset 60% randomly
-    filtered_i <- filtered_i$filter(ee$Filter$lt('random', 0.5))
+    filtered_i <- filtered_i$filter(ee$Filter$lt('random', 0.4))
   } 
   if (filtered_i$size()$getInfo() > 20000) {
-    print('size of filtered greater than 20k -> filtering [0.6] -> second filter')
+    print('size of filtered greater than 20k -> filtering [0.4]')
     ## compute random column
     filtered_i <- filtered_i$randomColumn()
     ## subset 60% randomly
-    filtered_i <- filtered_i$filter(ee$Filter$lt('random', 0.6))
+    filtered_i <- filtered_i$filter(ee$Filter$lt('random', 0.4))
   } 
   
   print('extracting filtered')
@@ -238,3 +238,4 @@ for (i in 1:length(unique(regions_list))) {
        temp_train, testPredictors, toExport, trainingRows, trainPredictors)
   }
 }
+
