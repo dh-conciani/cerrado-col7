@@ -111,6 +111,35 @@ for (i in 1:length(unique(regions_list))) {
   ## remove random column
   filtered_training <- filtered_training[-80]
   
+  ## get frequencies from filtered and raw
+  distribution <- as.data.frame(cbind(class = melt(table(samples_training$reference))$Var1,
+                                      raw_freq= melt(table(samples_training$reference))$value,
+                                      filt_freq= melt(table(filtered_training$reference))$value))
+  ## compute proportions
+  distribution$r_raw <- distribution$raw_freq / sum(distribution$raw_freq)*100
+  distribution$r_filt <- distribution$filt_freq / sum(distribution$filt_freq)*100
+  
+  ## get the frequency of filtered when balacing of raw is applied
+  distribution$n_get <- round(sum(distribution$filt_freq)/100*distribution$r_raw)
+  
+  ## compute the up and down-sampling 
+  ## create an empty recipe for data
+  filtered_w_balance <- as.data.frame(NULL)
+  ## for each class
+  for (m in 1:length(unique(distribution$class))){
+    ## get parameters
+    params <- subset(distribution, class == unique(distribution$class)[m])
+    ## get dataset
+    temp <- subset(filtered_training, reference == unique(distribution$class)[m])
+    ## get new sample bvased on balancing
+    sampled <- temp[sample(1:nrow(temp), params$n_get, replace= TRUE), ]
+    sampled$file <- 'filtered_w_balancing'
+    ## bind into recipe
+    filtered_w_balance <- rbind(filtered_w_balance, sampled)
+    ## remove
+    rm(params, temp, sampled)
+  }
+  
   ## extract signature for validation
   validation_signatures <- na.omit(ee_as_sf(landsat$sampleRegions(collection= validation_i,
                                                                   scale= 30,
@@ -118,15 +147,15 @@ for (i in 1:length(unique(regions_list))) {
                                                                   tileScale= 2), via = 'getInfo'))
   
   ## merge datasets
-  training <- as.data.frame(rbind(samples_training, filtered_training))
-  rm(samples_training, filtered_training)
+  training <- as.data.frame(rbind(samples_training, filtered_training, filtered_w_balance))
+  rm(samples_training, filtered_training, filtered_w_balance)
   
   ## for each file
   for(k in 1:length(unique(training$file))) {
     print(paste0('processing file: ', unique(training$file)[k]))
     ## subset for the file
     temp_train <- subset(training, file== unique(training$file)[k])
-    
+
     ## filter training dataset
     reference_class <- temp_train$reference
     
@@ -173,10 +202,6 @@ for (i in 1:length(unique(regions_list))) {
     
     ## perfom test by predcting unused dataset 
     rfTestPred <- predict (rfModel, testPredictors)
-    
-    ## remove 25
-    #testClasses <- testClasses[- which(rfTestPred == 25)]
-    #rfTestPred <- rfTestPred[- which(rfTestPred == 25)]
     
     ## convert all agro to 21
     rfTestPred <- gsub(15, 21,
