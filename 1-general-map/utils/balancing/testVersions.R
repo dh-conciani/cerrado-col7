@@ -52,6 +52,7 @@ landsat <- ee$ImageCollection('projects/nexgenmap/MapBiomas2/LANDSAT/BRAZIL/mosa
 
 ## get the number of unique regions
 regions_list <- unique(regions$aggregate_array('mapb')$getInfo())
+regions_list <- regions_list[29:38]
 
 ## create recipe to receive data
 recipe <- as.data.frame(NULL)
@@ -239,3 +240,5 @@ for (i in 1:length(unique(regions_list))) {
   }
 }
 
+## export data
+write.csv(recipe, './table/acc_versions.csv')
