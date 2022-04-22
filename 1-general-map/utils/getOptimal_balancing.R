@@ -83,13 +83,21 @@ for (i in 1:length(unique(regions_list))) {
   samples_training <- samples_training[-48]
   
   ## if the size of the filtered dataset is greater than 20k, performin sampling (to avoid memory error)
+  if (filtered_i$size()$getInfo() > 40000) {
+    print('size of filtered greater than 40k -> filtering [0.5]')
+    ## compute random column
+    filtered_i <- filtered_i$randomColumn()
+    ## subset 60% randomly
+    filtered_i <- filtered_i$filter(ee$Filter$lt('random', 0.5))
+  } 
   if (filtered_i$size()$getInfo() > 20000) {
-    print('size of filtered greater than 20k -> filtering [0.6]')
+    print('size of filtered greater than 20k -> filtering [0.6] -> second filter')
     ## compute random column
     filtered_i <- filtered_i$randomColumn()
     ## subset 60% randomly
     filtered_i <- filtered_i$filter(ee$Filter$lt('random', 0.6))
   } 
+  
   print('extracting filtered')
   ## extract signatures
   filtered_training <- na.omit(ee_as_sf(landsat$sampleRegions(collection= filtered_i,
@@ -167,8 +175,8 @@ for (i in 1:length(unique(regions_list))) {
     rfTestPred <- predict (rfModel, testPredictors)
     
     ## remove 25
-    testClasses <- testClasses[- which(rfTestPred == 25)]
-    rfTestPred <- rfTestPred[- which(rfTestPred == 25)]
+    #testClasses <- testClasses[- which(rfTestPred == 25)]
+    #rfTestPred <- rfTestPred[- which(rfTestPred == 25)]
     
     ## convert all agro to 21
     rfTestPred <- gsub(15, 21,
@@ -176,9 +184,20 @@ for (i in 1:length(unique(regions_list))) {
                             gsub(21, 21,
                                  rfTestPred)))
     
+
+    ## transform lists into factors and merge them 
+    toCompute <- as.data.frame(cbind(reference= testClasses,
+                                     predicted= rfTestPred))
+    
+    ## subset by considering classes that have reference points
+    toCompute <- subset(toCompute, predicted %in% unique(toCompute$predicted)[
+                    which(unique(toCompute$predicted) %in% unique(toCompute$reference))
+                      ]
+                    )
+    
     ## compute confusion matrix
-    result_val <- confusionMatrix(data = as.factor(rfTestPred),
-                                  reference = as.factor(testClasses))
+    result_val <- confusionMatrix(data = as.factor(toCompute$predicted),
+                                  reference = as.factor(toCompute$reference))
     
     ## build results 
     toExport <- rbind(melt(result_val$overall), 
@@ -186,7 +205,7 @@ for (i in 1:length(unique(regions_list))) {
     toExport$variable <- row.names(toExport)
     toExport$balancing <- unique(training$file)[k]
     toExport$mapb <- unique(regions_list)[i]
-    
+
     ## insert into recipe
     recipe <- rbind(recipe, toExport)
     ## clean memory
