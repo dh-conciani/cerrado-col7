@@ -4,7 +4,7 @@
   * Inclusion of CAR's thematic base for the State of Tocantins 
   * Revision in the filtering rules for the State of São Paulo 
   * Update of the PRODES deforestation database (2000 to 2021) 
-  * Removal of PROBIO data as a basis for native vegetation 
+  * Inclusion of canopy heigth (GEDI derived) to filter stable pixels
 
 ## 2_computeProportion:
   * Code structure optmization. Inclusion of .map functions instead repetition 
