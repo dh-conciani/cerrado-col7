@@ -2,10 +2,10 @@
 // dhemerson.costa@ipam.org.br 
 
 // input metadata
-var version = '3';
+var version = '5';
 
 // define classes to be assessed
-var classes = [3, 4, 12, 15, 19, 21, 25, 33];
+var classes = [3, 4, 11, 12, 15, 19, 21, 25, 33];
 
 // output directory
 var dirout = 'users/dh-conciani/collection7/sample/area';
@@ -13,19 +13,29 @@ var dirout = 'users/dh-conciani/collection7/sample/area';
 // cerrado classification regions
 var regionsCollection = ee.FeatureCollection('users/dh-conciani/collection7/classification_regions/vector');
 
-// define year to be used as reference
-var year = '2000';
+// set option (avaliable are 'year' or 'stable')
+var option = 'stable' ; 
+
+// if option equal to year
+if (option == 'year') {
+  // define year to be used as reference
+  var year = '2000';
+  // load collection 6.0 
+  var mapbiomas = ee.Image('projects/mapbiomas-workspace/public/collection6/mapbiomas_collection60_integration_v1')
+                    .select('classification_'+  year);
+}
+
+if (option == 'stable') {
+  var mapbiomas = ee.Image('users/dh-conciani/collection7/masks/cerrado_stablePixels_1985_2020_v2');
+}
+
 
 // define function to compute area (skm)
 var pixelArea = ee.Image.pixelArea().divide(1000000);
 
-// load collection 6.0 
-var mapbiomas = ee.Image('projects/mapbiomas-workspace/public/collection6/mapbiomas_collection60_integration_v1')
-                    .select('classification_'+  year);
-
 // reclassify following cerrado strategy 
 mapbiomas = mapbiomas.remap([3, 4, 5, 11, 12, 29, 15, 19, 39, 20, 40, 41, 46, 47, 48, 21, 23, 24, 30, 25, 33, 31],
-                            [3, 4, 3, 12, 12, 25, 15, 19, 19, 19, 19, 19, 19, 19, 19, 21, 25, 25, 25, 25, 33, 33]);
+                            [3, 4, 3, 11, 12, 25, 15, 19, 19, 19, 19, 19, 19, 19, 19, 21, 25, 25, 25, 25, 33, 33]);
 
 // mapbiomas color pallete
 var palettes = require('users/mapbiomas/modules:Palettes.js');
