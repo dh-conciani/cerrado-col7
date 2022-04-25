@@ -1,8 +1,7 @@
 
 # Changelog <br>
 ## 1_stablePixels:
-  * Inclusion of CAR's thematic base for the State of Tocantins 
-  * Revision in the filtering rules for the State of São Paulo 
+  * Inclusion and revision in the urules of reference maps (TO and SP)
   * Update of the PRODES deforestation database (2000 to 2021) 
   * Inclusion of canopy heigth (GEDI derived) to filter stable pixels
 
