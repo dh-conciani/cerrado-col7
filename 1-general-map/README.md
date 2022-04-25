@@ -1,7 +1,7 @@
 
 # Changelog <br>
 ## 1_stablePixels:
-  * Inclusion and revision in the urules of reference maps (TO and SP)
+  * Inclusion and revision in the rules of reference maps (TO and SP)
   * Update of the PRODES deforestation database (2000 to 2021) 
   * Inclusion of canopy heigth (GEDI derived) to filter stable pixels
 
