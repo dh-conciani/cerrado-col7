@@ -11,7 +11,7 @@ var CERRADO_simpl =
           [-40.6622201746899, -1.8506184138463584]]], null, false);
 
 // string to identify the output version
-var version_out = '1'; 
+var version_out = '2'; 
 
 // import the color ramp module from mapbiomas 
 var palettes = require('users/mapbiomas/modules:Palettes.js');
@@ -213,7 +213,7 @@ var gedi_filtered = referenceMapRef.where(referenceMapRef.eq(3).and(tree_canopy.
                                    .where(referenceMapRef.eq(33).and(tree_canopy.gt(0)), 50);
 
                                    
-Map.addLayer(gedi_filtered, vis, 'filtered')
+Map.addLayer(gedi_filtered, vis, 'filtered');
 
 // explort to workspace asset
 Export.image.toAsset({
