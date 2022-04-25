@@ -212,12 +212,16 @@ var gedi_filtered = referenceMapRef.where(referenceMapRef.eq(3).and(tree_canopy.
                                    .where(referenceMapRef.eq(25).and(tree_canopy.gt(0)), 50)
                                    .where(referenceMapRef.eq(33).and(tree_canopy.gt(0)), 50);
 
-                                   
+// plot map                               
 Map.addLayer(gedi_filtered, vis, 'filtered');
+
+// remove masked values
+var stable_pixels = gedi_filtered.updateMask(gedi_filtered.neq(50));
+
 
 // explort to workspace asset
 Export.image.toAsset({
-    "image": referenceMapRef.toInt8(),
+    "image": stable_pixels.toInt8(),
     "description": 'cerrado_stablePixels_1985_2020_v' + version_out,
     "assetId": dirout + 'cerrado_stablePixels_1985_2020_v'+ version_out,
     "scale": 30,
