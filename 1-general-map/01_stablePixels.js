@@ -56,6 +56,10 @@ var SEMA_SP = ee.Image('projects/mapbiomas-workspace/VALIDACAO/MATA_ATLANTICA/SP
 var SEMA_TO = ee.Image('users/dh-conciani/basemaps/TO_Wetlands_CAR');
     SEMA_TO = SEMA_TO.remap([11, 50, 128],
                             [11, 11, 0]);
+                            
+// global tree canopy (Lang et al, 2022) http://arxiv.org/abs/2204.08322
+var tree_canopy = ee.Image('users/nlang/ETH_GlobalCanopyHeight_2020_10m_v1');
+Map.addLayer(tree_canopy, {palette: ['red', 'orange', 'yellow', 'green'], min:0, max:30}, 'tree canopy');
 
 //////// end of products to filter stable samples ////////// 
 
@@ -134,7 +138,7 @@ frequencyMasks = ee.ImageCollection.fromImages(frequencyMasks);
 
 // compute the stable pixels
 var referenceMap = frequencyMasks.reduce(ee.Reducer.firstNonNull()).clip(CERRADO_simpl).aside(print);
-    Map.addLayer(referenceMap, vis, 'stable pixels');
+    Map.addLayer(referenceMap, vis, 'stable pixels', false);
 
 //////////////// process masks to improve stable pixels 
 // mask native vegetation pixels by usign deforestation from PROBIO
@@ -195,7 +199,21 @@ var referenceMapRef = referenceMapRef.where(SEMA_TO.eq(11).and(referenceMapRef.e
 var referenceMapRef = referenceMapRef.updateMask(referenceMapRef.neq(27));
 
 // plot correctred stable samples
-Map.addLayer(referenceMapRef, vis, 'filtered');
+Map.addLayer(referenceMapRef, vis, 'filtered by basemaps', false);
+
+// filter pixels by using GEDi derived tree canopy
+var gedi_filtered = referenceMapRef.where(referenceMapRef.eq(3).and(tree_canopy.lt(8)), 50)
+                                   .where(referenceMapRef.eq(4).and(tree_canopy.lte(2)), 50)
+                                   .where(referenceMapRef.eq(4).and(tree_canopy.gte(12)), 50)
+                                   .where(referenceMapRef.eq(4).and(tree_canopy.eq(0)), 12)
+                                   .where(referenceMapRef.eq(11).and(tree_canopy.gte(15)), 50)
+                                   .where(referenceMapRef.eq(12).and(tree_canopy.gte(6)), 50)
+
+                                   
+                                   
+
+                                   
+Map.addLayer(gedi_filtered, vis, 'filtered')
 
 // explort to workspace asset
 Export.image.toAsset({
