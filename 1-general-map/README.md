@@ -7,6 +7,7 @@
 
 ## 2_computeProportion:
   * Code structure optmization. Inclusion of .map functions instead repetition 
+  * Inclusion of stable samples as parameter
 
 ## 3_createPoints:
   * Code structure optmization. Inclusion of .map functions instead repetition 
