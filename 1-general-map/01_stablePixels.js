@@ -208,9 +208,9 @@ var gedi_filtered = referenceMapRef.where(referenceMapRef.eq(3).and(tree_canopy.
                                    .where(referenceMapRef.eq(4).and(tree_canopy.eq(0)), 12)
                                    .where(referenceMapRef.eq(11).and(tree_canopy.gte(15)), 50)
                                    .where(referenceMapRef.eq(12).and(tree_canopy.gte(6)), 50)
-
-                                   
-                                   
+                                   .where(referenceMapRef.eq(15).and(tree_canopy.gte(8)), 50)
+                                   .where(referenceMapRef.eq(25).and(tree_canopy.gt(0)), 50)
+                                   .where(referenceMapRef.eq(33).and(tree_canopy.gt(0)), 50);
 
                                    
 Map.addLayer(gedi_filtered, vis, 'filtered')
