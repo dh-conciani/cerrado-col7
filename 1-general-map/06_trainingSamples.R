@@ -64,6 +64,10 @@ lon_sin <- geo_coordinates$select('longitude')$multiply(pi)$divide(180)$
 lon_cos <- geo_coordinates$select('longitude')$multiply(pi)$divide(180)$
   cos()$multiply(-1)$multiply(10000)$toInt16()$rename('longitude_cos')
 
+## get heigth above nearest drainage
+hand <- ee$ImageCollection("users/gena/global-hand/hand-100")$mosaic()$toInt16()$rename('hand')
+
+
 
 Map$addLayer(lat$randomVisualizer())
 
