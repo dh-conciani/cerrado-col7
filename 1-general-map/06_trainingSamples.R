@@ -1,7 +1,7 @@
 ## For clarification, write to <dhemerson.costa@ipam.org.br> and <felipe.lenti@ipam.org.br>
 ## Export yearly spectral signatures for each region and year to be used as training samples
 ## Exported data is composed by spatialPoints with spectral signature values grouped by column
-## Auxiliary bands were computed (Lat, Long^2, NDVI Amp)
+## Auxiliary bands were computed (Lat, Long^2, NDVI Amp and HAND)
 
 ## read libraries
 library(rgee)
@@ -39,4 +39,33 @@ bands <- mosaic$first()$bandNames()$getInfo()
 ## remove bands with 'cloud' or 'shade' into their names
 bands <- bands[- which(sapply(strsplit(bands, split='_', fixed=TRUE), function(x) (x[1])) == 'cloud' |
                         sapply(strsplit(bands, split='_', fixed=TRUE), function(x) (x[1])) == 'shade') ]
+
+## for each region 
+for (i in 1:length(regions_list)) {
+  ## for each year
+  for (j in 1:length(years)) {
+    
+  }
+}
+
+## print status
+print(paste0('region ' , regions_list[1] , ' || year ' , years[1]))
+## subset region
+region_i <- regionsCollection$filterMetadata('mapb', "equals", regions_list[1])$geometry()
+
+## compute additional bands
+geo_coordinates <- ee$Image$pixelLonLat()$clip(region_i)
+## get latitude
+lat <- geo_coordinates$select('latitude')$add(5)$multiply(-1)$multiply(1000)$toInt16()
+## get longitude
+lon_sin <- geo_coordinates$select('longitude')$multiply(pi)$divide(180)$
+  sin()$multiply(-1)$multiply(10000)$toInt16()$rename('longitude_sin')
+## cosine
+lon_cos <- geo_coordinates$select('longitude')$multiply(pi)$divide(180)$
+  cos()$multiply(-1)$multiply(10000)$toInt16()$rename('longitude_cos')
+
+
+Map$addLayer(lat$randomVisualizer())
+
+#long = ll.select('longitude').add(34.8).multiply(-1).multiply(1000).toInt16()
 
