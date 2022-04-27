@@ -1,7 +1,7 @@
 ## For clarification, write to <dhemerson.costa@ipam.org.br> and <felipe.lenti@ipam.org.br>
 ## Export yearly spectral signatures for each region and year to be used as training samples
 ## Exported data is composed by spatialPoints with spectral signature values grouped by column
-## Auxiliary bands were computed (Lat, Long^2, NDVI Amp and HAND)
+## Auxiliary bands were computed (Lat, Long, NDVI amplitude and HAND)
 
 ## read libraries
 library(rgee)
