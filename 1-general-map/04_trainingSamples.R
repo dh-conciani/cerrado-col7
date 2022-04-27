@@ -115,17 +115,13 @@ for (i in 1:length(regions_list)) {
     samples_ij <- samples$filterBounds(regionsCollection$filterMetadata('mapb', "equals", regions_list[i]))
     print(paste0('number of points: ', samples_ij$size()$getInfo()))      
     
-    ## define function to extract spectral signatures
-    #extractSignatures <- function(feature) {
-    #  return (
-    #    feature$set(mosaic_i$reduceRegion(reducer='mean', 
-    #                                      geometry= feature$geometry(),
-    #                                      scale=30))
-    #    )
-    #  }
-    
     ## extract signatures
-    #training_i <- samples_ij$map(extractSignatures)
+    #training_i <- samples_ij$map(function(feature) {
+    #  feature$set(mosaic_i$reduceRegion(reducer='mean', 
+    #                                    geometry= feature$geometry(),
+    #                                    scale=30))
+    #    }
+    #  )
     
     ## get training samples
     training_i <- mosaic_i$sampleRegions(collection= samples_ij,
