@@ -120,15 +120,31 @@ samples_ij <- samples$filterBounds(regionsCollection$filterMetadata('mapb', "equ
 print(paste0('number of points: ', samples_ij$size()$getInfo()))      
 
 ## define function to extract spectral signatures
-extractSignatures <- function(feature) {
-  return (
-    feature$set(mosaic_i$reduceRegion(reducer='mean', 
-                                      geometry= feature$geometry(),
-                                      scale=30))
-    )
-  }
+#extractSignatures <- function(feature) {
+#  return (
+#    feature$set(mosaic_i$reduceRegion(reducer='mean', 
+#                                      geometry= feature$geometry(),
+#                                      scale=30))
+#    )
+#  }
   
 ## extract signatures
-training_i <- samples_ij$map(extractSignatures)
+#training_i <- samples_ij$map(extractSignatures)
 
-training_i$getInfo()
+## get training samples
+training_i <- mosaic_i$sampleRegions(collection= samples_ij,
+                                     scale= 30,
+                                     geometries= TRUE,
+                                     tileScale= 2)
+
+## remove NA or NULL from extracted data
+training_i <- training_i$filter(ee$Filter$notNull(bands))
+
+## build task to export data
+task <- ee$batch$Export$table$toAsset(
+  training_i, paste0('train_col7_reg' , regions_list[1] , '_' , years[1] , '_v' , version),
+  paste0(dirout , 'train_col7_reg' , regions_list[1] , '_' , years[1] , '_v' , version))
+
+## start task
+task$start()
+print ('========================================')
