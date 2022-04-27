@@ -1,5 +1,4 @@
-// generate stable pixels from collection 6.0 for the Cerrado biome
-// uses high resolution reference maps and deforestation databases 
+// generate training msk based in stable pixels from mapbiomas collection 6.0, reference maps and GEDI
 // dhemerson.costa@ipam.org.br
 
 // set area of interest 
