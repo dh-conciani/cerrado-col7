@@ -27,7 +27,7 @@ rules <- read.csv('./_aux/mosaic_rules.csv')
 regionsCollection <- ee$FeatureCollection('users/dh-conciani/collection7/classification_regions/vector')
 
 ## import sample points
-samples <- ee$FeatureCollection('users/dh-conciani/collection7/sample/points/samplePoints_v5')
+samples <- ee$FeatureCollection('users/dh-conciani/collection7/sample/points/samplePoints_v7')
 
 ## define regions to extract spectral signatures (spatial operator)
 regions_list <- unique(regionsCollection$aggregate_array('mapb')$getInfo())
@@ -67,11 +67,13 @@ lon_cos <- geo_coordinates$select('longitude')$multiply(pi)$divide(180)$
   cos()$multiply(-1)$multiply(10000)$toInt16()$rename('longitude_cos')
 
 ## get heigth above nearest drainage
-hand <- ee$ImageCollection("users/gena/global-hand/hand-100")$mosaic()$toInt16()$rename('hand')
-years[1] <- 2002
+hand <- ee$ImageCollection("users/gena/global-hand/hand-100")$mosaic()$toInt16()$
+  clip(region_i)$rename('hand')
+
 ## get the landsat mosaic for the current year 
 mosaic_i <- mosaic$filterMetadata('year', 'equals', years[1])$
   filterMetadata('satellite', 'equals', subset(rules, year == years[1])$sensor)$
+  filterBounds(region_i)$
   mosaic()$select(bands)
 
 ## if the year is greater than 1986, get the 3yr NDVI amplitude
@@ -80,11 +82,11 @@ if (years[1] > 1986) {
   ## get previous year mosaic 
   mosaic_i1 <- mosaic$filterMetadata('year', 'equals', years[1] - 1)$
     filterMetadata('satellite', 'equals', subset(rules, year == years[1])$sensor_past1)$
-    mosaic()$select(c('ndvi_median_dry','ndvi_median_wet'))
+    mosaic()$select(c('ndvi_median_dry','ndvi_median_wet'))$clip(region_i)
   ## get previous 2yr mosaic 
   mosaic_i2 <- mosaic$filterMetadata('year', 'equals', years[1] - 2)$
     filterMetadata('satellite', 'equals', subset(rules, year == years[1])$sensor_past2)$
-    mosaic()$select(c('ndvi_median_dry','ndvi_median_wet'))
+    mosaic()$select(c('ndvi_median_dry','ndvi_median_wet'))$clip(region_i)
   
   ## compute the minimum NDVI over dry season 
   min_ndvi <- ee$ImageCollection$fromImages(c(mosaic_i$select('ndvi_median_dry'),
@@ -97,12 +99,36 @@ if (years[1] > 1986) {
                                               mosaic_i2$select('ndvi_median_wet')))$max()
   
   ## get the amplitude
-  amp_ndvi <- max_ndvi$subtract(min_ndvi)$rename('amp_ndvi_3yr');
+  amp_ndvi <- max_ndvi$subtract(min_ndvi)$rename('amp_ndvi_3yr')$clip(region_i);
 }
 
 ## if the year[j] is lower than 1987, get null image as amp
 if (years[1] < 1987){
-  amp_ndvi <- ee$Image(0)$rename('amp_ndvi_3yr');
+  amp_ndvi <- ee$Image(0)$rename('amp_ndvi_3yr')$clip(region_i);
 }
 
+## bind mapbiomas mosaic and auxiliary bands
+mosaic_i <- mosaic_i$addBands(lat)$
+  addBands(lon_sin)$
+  addBands(lon_cos)$
+  addBands(hand)$
+  addBands(amp_ndvi)$
+  addBands(ee$Image(years[1])$int16()$rename('year'))
 
+## subset sample points for the region 
+samples_ij <- samples$filterBounds(regionsCollection$filterMetadata('mapb', "equals", regions_list[1]))
+print(paste0('number of points: ', samples_ij$size()$getInfo()))      
+
+## define function to extract spectral signatures
+extractSignatures <- function(feature) {
+  return (
+    feature$set(mosaic_i$reduceRegion(reducer='mean', 
+                                      geometry= feature$geometry(),
+                                      scale=30))
+    )
+  }
+  
+## extract signatures
+training_i <- samples_ij$map(extractSignatures)
+
+training_i$getInfo()
