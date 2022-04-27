@@ -13,6 +13,10 @@ version <- "1"     ## version string
 ## define output directory
 dirout <- 'users/dh-conciani/collection7/training/v1/'
 
+## biome
+biomes <- ee$Image('projects/mapbiomas-workspace/AUXILIAR/biomas-2019-raster')
+cerrado <- biomes$updateMask(biomes$eq(4))
+
 ## define mosaic input 
 mosaic = ee$ImageCollection('projects/nexgenmap/MapBiomas2/LANDSAT/BRAZIL/mosaics-2')$
   filterMetadata('biome', 'equals', 'CERRADO')
@@ -35,3 +39,4 @@ bands <- mosaic$first()$bandNames()$getInfo()
 ## remove bands with 'cloud' or 'shade' into their names
 bands <- bands[- which(sapply(strsplit(bands, split='_', fixed=TRUE), function(x) (x[1])) == 'cloud' |
                         sapply(strsplit(bands, split='_', fixed=TRUE), function(x) (x[1])) == 'shade') ]
+
