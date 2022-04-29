@@ -39,7 +39,7 @@ bands <- bands[- which(sapply(strsplit(bands, split='_', fixed=TRUE), function(x
                          sapply(strsplit(bands, split='_', fixed=TRUE), function(x) (x[1])) == 'shade') ]
 
 ## paste auxiliary bandnames
-#aux_bands <- c('latitude', 'longitude_sin', 'longitude_cos', 'hand', 'amp_ndvi_3yr')
+aux_bands <- c('latitude', 'longitude_sin', 'longitude_cos', 'hand', 'amp_ndvi_3yr')
 
 ## define assets
 ### training samples (prefix string)
@@ -137,4 +137,11 @@ training_samples <- ee$FeatureCollection(paste0(training_samples, 'v', samples_v
 ## clip mosaic for the region
 mosaic_i <- mosaic_i$updateMask(region_i_ras$eq(as.numeric(regions_list[37])))
 
+## train classifier
+classifier <- ee$Classifier$smileRandomForest(numberOfTrees= n_tree)$
+  train(training_samples, 'reference', c(bands, aux_bands))
 
+## perform classification and mask only to region 
+predicted <- mosaic_i$classify(classifier)
+
+Map$addLayer(predicted)
