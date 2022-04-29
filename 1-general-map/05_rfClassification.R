@@ -142,6 +142,43 @@ classifier <- ee$Classifier$smileRandomForest(numberOfTrees= n_tree)$
   train(training_samples, 'reference', c(bands, aux_bands))
 
 ## perform classification and mask only to region 
-predicted <- mosaic_i$classify(classifier)
+predicted <- mosaic_i$classify(classifier)$mask(mosaic_i$select('red_median'))
 
-Map$addLayer(predicted)
+## add year as bandname
+predicted <- predicted$rename(paste0('classification_', years[1]))$toInt8()
+
+## set properties
+predicted <- predicted$
+  set('collection', '7')$
+  set('version', output_version)$
+  set('biome', 'CERRADO')$
+  set('mapb', as.numeric(regions_list[37]))$
+  set('year', as.numeric(years[1]))
+
+## build classification
+if (years[1] == 1985) {
+  stacked_classification <- predicted
+} else {
+  stacked_classification <- stacked_classification$addBands(predicted)    
+}
+
+## outside years
+print('exporting stacked classification')
+
+## create filename
+file_name <- paste0('CERRADO_reg', regions_list[37], '_col7_v', output_version)
+
+## build task
+task <- ee$batch$Export$image$toAsset(
+  image= stacked_classification$toInt8(),
+  description= file_name,
+  assetId= paste0(output_asset, file_name),
+  scale= 30,
+  maxPixels= 1e13,
+  region= region_i_vec
+)
+
+## export 
+task$start()
+print ('------------> NEXT REGION --------->')
+
