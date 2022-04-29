@@ -43,7 +43,7 @@ aux_bands <- c('latitude', 'longitude_sin', 'longitude_cos', 'hand', 'amp_ndvi_3
 
 ## define assets
 ### training samples (prefix string)
-training_samples <- 'users/dh-conciani/collection7/training/'
+training_dir <- 'users/dh-conciani/collection7/training/'
 
 ### classification regions (imageCollection, one region per image)
 regions_ic <- ee$ImageCollection('users/dh-conciani/collection7/classification_regions/eachRegion')
@@ -119,14 +119,14 @@ for (i in 1:length(regions_list)) {
       addBands(amp_ndvi)
     
     ## limit water samples only to 175 samples (avoid over-estimation)
-    water_samples <- ee$FeatureCollection(paste0(training_samples, 'v', samples_version, '/train_col7_reg', regions_list[i], '_', years[j], '_v', samples_version))$
+    water_samples <- ee$FeatureCollection(paste0(training_dir, 'v', samples_version, '/train_col7_reg', regions_list[i], '_', years[j], '_v', samples_version))$
       filter(ee$Filter$eq("reference", 33))$
       filter(ee$Filter$eq("slope", 0))$
       filter(ee$Filter$eq("hand", 0))$
       limit(175)                        ## insert water samples limited to 175 
     
     ## merge filtered water with other classes
-    training_samples <- ee$FeatureCollection(paste0(training_samples, 'v', samples_version, '/train_col7_reg', regions_list[i], '_', years[j], '_v', samples_version))$
+    training_ij <- ee$FeatureCollection(paste0(training_dir, 'v', samples_version, '/train_col7_reg', regions_list[i], '_', years[j], '_v', samples_version))$
       filter(ee$Filter$neq("reference", 33))$ ## remove water samples
       merge(water_samples)
     
@@ -135,7 +135,7 @@ for (i in 1:length(regions_list)) {
     
     ## train classifier
     classifier <- ee$Classifier$smileRandomForest(numberOfTrees= n_tree)$
-      train(training_samples, 'reference', c(bands, aux_bands))
+      train(training_ij, 'reference', c(bands, aux_bands))
     
     ## perform classification and mask only to region 
     predicted <- mosaic_i$classify(classifier)$mask(mosaic_i$select('red_median'))
@@ -157,10 +157,6 @@ for (i in 1:length(regions_list)) {
     } else {
       stacked_classification <- stacked_classification$addBands(predicted)    
     }
-    
-    ## wait 20 seconds to nex solicitation
-    print('waiting 20 sec...')
-    Sys.sleep(20)
     
   } ## end of year processing
   print('exporting stacked classification')
