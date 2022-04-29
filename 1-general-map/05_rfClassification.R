@@ -10,10 +10,10 @@ samples_version <- '1'   # input training samples version
 output_version <-  '1'   # output classification version 
 
 ## define hyperparameters for then rf classifier
-n_tree <- 250
+n_tree <- 300
 
 ## define output asset
-output_asset <- 'projects/mapbiomas-workspace/COLECAO6/classificacao-test/'
+output_asset <- 'users/dh-conciani/collection7/c7-general/'
 
 ## read landsat mosaic 
 mosaic <- ee$ImageCollection('projects/nexgenmap/MapBiomas2/LANDSAT/BRAZIL/mosaics-2')$
