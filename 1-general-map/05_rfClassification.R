@@ -43,5 +43,21 @@ bands <- c(bands, 'latitude', 'longitude_sin', 'longitude_cos', 'hand', 'amp_ndv
 training_samples <- 'users/dh-conciani/collection7/training/'
 
 ### classification regions (imageCollection, one region per image)
-regions_ic <- 'users/dh-conciani/collection7/classification_regions/eachRegion'
+regions_ic <- ee$ImageCollection('users/dh-conciani/collection7/classification_regions/eachRegion')
+
+## for each region
+for (i in 1:length(regions_list)) {
+  print(paste0('processing region [', regions_list[i], ']'))
+  ## get the vector for the region [i]
+  
+  for (j in 1:length(years)) {
+    print(paste0('----> ', years[j]))
+  }
+}
+
+## get the vector for the regon [i]
+region_i_vec <- regions_vec$filterMetadata('mapb', 'equals', regions_list[37])$geometry()
+## get the raster for the region [i]
+region_i_ras = regions_ic$filterMetadata('mapb', 'equals', as.character(regions_list[37]))$mosaic()
+
 
