@@ -10,43 +10,34 @@ var geometry =
           [-40.31639240564828, -1.2109638051779688]]], null, false);
           
 // set metadata 
-var input_vesion = 1;
+var input_version = '1';
 var output_version = '1';
 
 // set directories
-var collection = 'users/dh-conciani/collection7/c7-general';
+var input = 'users/dh-conciani/collection7/c7-general';
 var output = 'users/dh-conciani/collection7/c7-general-post/';
 var filename = 'CERRADO_col7_gapfill_v';
 
+// import classification 
+var image = ee.ImageCollection(input)
+            .filterMetadata('version', 'equals', input_version)
+            .mosaic();
 
+// mask and discard values equal to zero
+image = image.mask(image.neq(0));
+print('input classification', image);
 
-
-var palettes = require('users/mapbiomas/modules:Palettes.js');
+// get the mapbiomas color ramp
 var vis = {
     'min': 0,
-    'max': 34,
-    'palette': palettes.get('classification2')
+    'max': 49,
+    'palette': require('users/mapbiomas/modules:Palettes.js').get('classification6')
 };
 
-var image = ee.ImageCollection(dircol6)
-            .filterMetadata('version', 'equals', version)
-            .filterMetadata('collection', 'equals', '6')
-            .filterMetadata('biome', 'equals', bioma)
-            .min();
-            
-image = image.mask(image.neq(0));
-print(image);
+Map.addLayer(image.select(['classification_2021']), vis, 'input');
 
-var years = [
-    1985, 1986, 1987, 1988,
-    1989, 1990, 1991, 1992,
-    1993, 1994, 1995, 1996,
-    1997, 1998, 1999, 2000,
-    2001, 2002, 2003, 2004,
-    2005, 2006, 2007, 2008,
-    2009, 2010, 2011, 2012,
-    2013, 2014, 2015, 2016,
-    2017, 2018, 2019, 2020];
+// set the list of years to be filtered
+var years = ee.List.sequence({'start': 1985, 'end': 2021, step: 1}).getInfo();
 
 /**
  * User defined functions
@@ -91,7 +82,6 @@ var applyGapFill = function (image) {
             }, ee.Image(imageFilledt0tn.select([bandNamesReversed.get(0)]))
         );
 
-
     imageFilledtnt0 = ee.Image(imageFilledtnt0).select(bandNames);
 
     return imageFilledtnt0;
@@ -110,8 +100,6 @@ var bandNames = ee.List(
 var bandsOccurrence = ee.Dictionary(
     bandNames.cat(image.bandNames()).reduce(ee.Reducer.frequencyHistogram())
 );
-
-print(bandsOccurrence);
 
 // insert a masked band 
 var bandsDictionary = bandsOccurrence.map(
@@ -145,23 +133,18 @@ var imagePixelYear = ee.Image.constant(years)
 var imageFilledtnt0 = applyGapFill(imageAllBands);
 var imageFilledYear = applyGapFill(imagePixelYear);
 
-print (image);
-Map.addLayer(image.select('classification_'+ ano), vis, 'image',false);
-
-
-Map.addLayer(imageFilledtnt0.select('classification_' + ano), vis, 'filtered');
+// check filtered image
+print ('output classification', imageFilledtnt0);
+Map.addLayer(imageFilledtnt0.select('classification_2021'), vis, 'filtered');
 
 // write metadata
-imageFilledtnt0 = imageFilledtnt0.set('vesion', '1');
-print(imageFilledtnt0);
+imageFilledtnt0 = imageFilledtnt0.set('vesion', output_version);
 
-print(dirout+prefixo_out+vesion_out);
-
-// export asset
+// export as GEE asset
 Export.image.toAsset({
     'image': imageFilledtnt0,
-    'description': prefixo_out+vesion_out,
-    'assetId': dirout+prefixo_out+vesion_out,
+    'description': filename + output_version,
+    'assetId': output + filename + output_version,
     'pyramidingPolicy': {
         '.default': 'mode'
     },
