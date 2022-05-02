@@ -25,19 +25,32 @@ var classification = ee.Image(root + file_in);
 var nChanges = classification.reduce(ee.Reducer.countRuns()).subtract(1).rename('number_of_changes');
 var nClasses = classification.reduce(ee.Reducer.countDistinctNonNull()).rename('number_of_classes');
 
+// get the count of connections
+var connected_nChanges = nChanges.connectedPixelCount({
+      'maxSize': 100, 
+      'eightConnected': false});
+
+var connected_nClasses = nClasses.connectedPixelCount({
+      'maxSize': 100, 
+      'eightConnected': false});
+
 // compute the mode
 var mode = classification.reduce(ee.Reducer.mode());
 
-// plot on the map
+// plot 
 // number of changes
 Map.addLayer(nChanges, {palette: ["#C8C8C8", "#FED266", "#FBA713", "#cb701b", "#a95512", "#662000", "#cb181d"],
-                                  min: 0, max: 15}, 'number of changes');
- 
+                                  min: 0, max: 15}, 'number of changes', false);
+
+Map.addLayer(connected_nChanges, {palette: ['green', 'yellow', 'orange', 'red'], min:0, max:10}, 'con. nChanges', false);
+
 // number of classes
 Map.addLayer(nClasses, {palette: [ "#ffffff", "#C8C8C8", "#AE78B2", "#772D8F", "#4C226A", "#22053A"],
-                                  min: 0, max: 5}, 'number of classes');
+                                  min: 0, max: 5}, 'number of classes', false);
                                   
+Map.addLayer(connected_nClasses, {palette: ['green', 'yellow', 'orange', 'red'], min:0, max:3}, 'con. nClasses', false);
+
 // classification
-Map.addLayer(mode, vis, 'mode');
+Map.addLayer(mode, vis, 'mode', false);
 Map.addLayer(classification.select(['classification_2021']), vis, 'classification');
 Map.addLayer(classification, {}, 'all', false);
