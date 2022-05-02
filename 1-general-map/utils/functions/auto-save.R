@@ -2,8 +2,6 @@
 data <- as.data.frame(cbind(value= runif(100000, min=0, max=1),
                             desc= runif(100000, min=50, max=100)))
 
-## neste exemplo ele vai inserir um valor em uma coluna fake em todas as linhas
-
 ## checar se o arquivo de salvamento ja existe
 if (file.exists('./auto-save.csv') == TRUE) {
   ## se existir, carregar arquivo
