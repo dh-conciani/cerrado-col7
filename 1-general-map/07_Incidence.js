@@ -1,4 +1,4 @@
-// filter spurious transitions by using number of changes and number of classes 
+// filter spurious transitions by using the number of changes, number of classes, and conectivity 
 // for clarification write to dhemerson.costa@ipam.org.br
 
 // set root imageCollection
