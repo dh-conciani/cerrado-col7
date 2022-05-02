@@ -1,4 +1,4 @@
-// filter spurious transitions by using the number of changes, number of classes, and conectivity 
+// filter spurious transitions by using number of changes and number of classes 
 // for clarification write to dhemerson.costa@ipam.org.br
 
 // set root imageCollection
@@ -20,6 +20,24 @@ var vis = {
 
 // load input
 var classification = ee.Image(root + file_in);
-Map.addLayer(classification.select(['classification_2021']), vis, 'classification');
 
-// compute number of changes; and number of classes
+// compute number of classes and changes 
+var nChanges = classification.reduce(ee.Reducer.countRuns()).subtract(1).rename('number_of_changes');
+var nClasses = classification.reduce(ee.Reducer.countDistinctNonNull()).rename('number_of_classes');
+
+// compute the mode
+var mode = classification.reduce(ee.Reducer.mode());
+
+// plot on the map
+// number of changes
+Map.addLayer(nChanges, {palette: ["#C8C8C8", "#FED266", "#FBA713", "#cb701b", "#a95512", "#662000", "#cb181d"],
+                                  min: 0, max: 15}, 'number of changes');
+ 
+// number of classes
+Map.addLayer(nClasses, {palette: [ "#ffffff", "#C8C8C8", "#AE78B2", "#772D8F", "#4C226A", "#22053A"],
+                                  min: 0, max: 5}, 'number of classes');
+                                  
+// classification
+Map.addLayer(mode, vis, 'mode');
+Map.addLayer(classification.select(['classification_2021']), vis, 'classification');
+Map.addLayer(classification, {}, 'all', false);
