@@ -1,4 +1,4 @@
-// filter spurious transitions by using number of changes and number of classes 
+// filter spurious transitions by using the number of changes, connections and mode reducer
 // for clarification write to dhemerson.costa@ipam.org.br
 
 // set root imageCollection
@@ -21,8 +21,11 @@ var vis = {
 // load input
 var classification = ee.Image(root + file_in);
 
+// remove wetlands from incidents filter
+var classification_remap = classification.updateMask(classification.neq(11));
+
 // compute number of classes and changes 
-var nChanges = classification.reduce(ee.Reducer.countRuns()).subtract(1).rename('number_of_changes');
+var nChanges = classification_remap.reduce(ee.Reducer.countRuns()).subtract(1).rename('number_of_changes');
 
 // get the count of connections
 var connected_nChanges = nChanges.connectedPixelCount({
@@ -30,7 +33,7 @@ var connected_nChanges = nChanges.connectedPixelCount({
       'eightConnected': false});
 
 // compute the mode
-var mode = classification.reduce(ee.Reducer.mode());
+var mode = classification_remap.reduce(ee.Reducer.mode());
 
 // plot 
 // number of changes
@@ -53,11 +56,32 @@ var rect_border = mode.updateMask(border_mask);
 // get classes to rectfy
 var forest = ee.Image(3).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(3)));
 var savanna = ee.Image(4).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(4)));
-var wetland = ee.Image(11).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(11)));
 var grassland = ee.Image(12).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(12)));
 var pasture = ee.Image(15).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(15)));
 var agriculture = ee.Image(19).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(19)));
 var mosaic = ee.Image(21).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(21)));
 
-// build rect mask
+// blend masks
+var incidentsMask = rect_border.blend(forest)
+                               .blend(pasture)
+                               .blend(agriculture)
+                               .blend(savanna)
+                               .blend(grassland)
+                               .toByte();
 
+// build correction
+classification = classification.blend(incidentsMask);
+Map.addLayer(classification.select(['classification_2021']), vis, 'rectified');
+
+// export as GEE asset
+Export.image.toAsset({
+    'image': classification,
+    'description': 'CERRADO_col7_gapfill_incidence_v' + output_version,
+    'assetId': root + 'CERRADO_col7_gapfill_incidence_v' + output_version,
+    'pyramidingPolicy': {
+        '.default': 'mode'
+    },
+    'region': classification.geometry(),
+    'scale': 30,
+    'maxPixels': 1e13
+});
