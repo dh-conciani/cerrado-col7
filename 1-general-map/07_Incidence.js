@@ -49,36 +49,15 @@ border_mask = border_mask.updateMask(border_mask.eq(1));
 
 // get borders to rectfy
 var rect_border = mode.updateMask(border_mask);
-//Map.addLayer(rect_border, vis, 'border to rect');
 
-// get forests to rectfy
-var forest = connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(3));
-forest = ee.Image(3).updateMask(forest);
-//Map.addLayer(forest, vis, 'forest');
-
-// get savanna to rectfy 
-var savanna = connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(4));
-savanna = ee.Image(4).updateMask(savanna);
-
-// get wetland to rectfy 
-var wetland = connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(11));
-wetland = ee.Image(11).updateMask(wetland);
-
-// get grassland to rectfy 
-var grassland = connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(12));
-grassland = ee.Image(12).updateMask(grassland);
-
-// get pasture to rectfy 
-var pasture = connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(15));
-pasture = ee.Image(15).updateMask(pasture);
-
-// get agriculture to rectfy 
-var agriculture = connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(19));
-agriculture = ee.Image(19).updateMask(agriculture);
-
-// get mosaic to rectfy 
-var mosaic = connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(21));
-mosaic = ee.Image(21).updateMask(mosaic);
+// get classes to rectfy
+var forest = ee.Image(3).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(3)));
+var savanna = ee.Image(4).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(4)));
+var wetland = ee.Image(11).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(11)));
+var grassland = ee.Image(12).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(12)));
+var pasture = ee.Image(15).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(15)));
+var agriculture = ee.Image(19).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(19)));
+var mosaic = ee.Image(21).updateMask(connected_nChanges.gt(6).and(nChanges.gt(12)).and(mode.eq(21)));
 
 // build rect mask
 
