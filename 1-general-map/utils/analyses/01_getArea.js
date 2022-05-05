@@ -9,7 +9,8 @@ var root = 'users/dh-conciani/collection7/c7-general-post/';
 
 // define files to process 
 var asset = [
-  root + 'CERRADO_col7_gapfill_v1'
+  //root + 'CERRADO_col7_gapfill_v1',
+  root + 'CERRADO_col7_gapfill_incidence_v1'
   ];
 
 // define classification regions 
