@@ -1,21 +1,34 @@
-var bioma = "CERRADO";
-var file_in = bioma + '_col6_gapfill_incid_v6';
+// temporal filter - cerrado biome 
+// dhemerson.costa@ipam.org.br
 
-var dirout = 'projects/mapbiomas-workspace/COLECAO6/classificacao-test/';
-var version_out = 6;
-var file_out = bioma + '_col6_gapfill_incid_temporal_v';
+// set root directory 
+var root = 'users/dh-conciani/collection7/c7-general-post/';
 
-var palettes = require('users/mapbiomas/modules:Palettes.js');
+// set file to be processed
+var file_in = 'CERRADO_col7_gapfill_incidence_v1';
 
+// set metadata to export 
+var version_out = '1';
+
+// import mapbiomas color ramp
 var vis = {
     'min': 0,
-    'max': 34,
-    'palette': palettes.get('classification2')
+    'max': 49,
+    'palette': require('users/mapbiomas/modules:Palettes.js').get('classification6')
 };
 
-var image_gapfill = ee.Image(dirout + file_in)
-                      .slice(0, 36)
-                      .aside(print);
+// import classification 
+var classification = ee.Image(root + file_in)
+                        .aside(print);
+
+// set functions to be applied considering time-windows
+rule_3yr = function(class, year, image) {
+  // get current year classification
+  
+}
+
+                      
+                      /*
                       
 var mask3 = function(valor, ano, imagem){
   var mask = imagem.select('classification_'+ (parseInt(ano) - 1)).eq (valor)
@@ -300,3 +313,5 @@ Export.image.toAsset({
     'scale': 30,
     'maxPixels': 1e13
 });
+
+*/
