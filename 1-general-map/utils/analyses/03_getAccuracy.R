@@ -12,11 +12,13 @@ library(reshape2)
 ee_Initialize()
 
 ## set directories
-#file_path <- 'projects/mapbiomas-workspace/public/collection6/'
+# 'projects/mapbiomas-workspace/public/collection6/'
+# 'users/dhconciani/backup-c6/general-map-ft/'
 file_path <- 'users/dh-conciani/collection7/c7-general-post/'
-  
+
 ##  define files to be computed
-#file_name <- c('mapbiomas_collection60_integration_v1')
+# 'mapbiomas_collection60_integration_v1'
+# 'CERRADO_col6_gapfill_incid_temporal_spatial_freq_v8'
 file_name <- c('CERRADO_col7_gapfill_v1',
                'CERRADO_col7_gapfill_incidence_v1')
 
