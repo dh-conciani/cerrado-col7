@@ -22,22 +22,20 @@ var classification = ee.Image(root + file_in)
                         .aside(print);
 
 // set functions to be applied considering time-windows
-rule_3yr = function(class, year, image) {
-  // get current year classification
-  
+rule_3yr = function(class_id, year, image) {
+  // get pixels to be mask when the mid year is different of previous and next
+  var to_mask = image.select(['clssification_' + year - 1]).eq(class_id)
+           .and(image.select(['classification_' + year]).neq(class_id))
+           .and(image.select(['classification_' + year + 1]).eq(class_id));
+           
+  // rectify value in the mid
+  return image.select(['classification_' + year])
+              .where(to_mask.eq(1), class_id);
 }
 
                       
                       /*
-                      
-var mask3 = function(valor, ano, imagem){
-  var mask = imagem.select('classification_'+ (parseInt(ano) - 1)).eq (valor)
-        .and(imagem.select('classification_'+ (ano)              ).neq(valor))
-        .and(imagem.select('classification_'+ (parseInt(ano) + 1)).eq (valor))
-  var muda_img = imagem.select('classification_'+ (ano)    ).mask(mask.eq(1)).where(mask.eq(1), valor);  
-  var img_out = imagem.select('classification_'+ano).blend(muda_img)
-  return img_out;
-}
+
 
 var mask4 = function(valor, ano, imagem){
   var mask = imagem.select('classification_'+ (parseInt(ano) - 1)).eq (valor)
