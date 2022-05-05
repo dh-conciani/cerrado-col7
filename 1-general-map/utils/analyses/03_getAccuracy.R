@@ -1,9 +1,23 @@
+## get accuracy for test version in the mapbiomas collection 7
+## dhemerson.costa@ipam.org.br
+
+## get libraries
+library(rgee)
+library(rgeeExtra)
+library(reticulate)
+library(caret)
+
+## initialize
+ee_Initialize()
 
 ## set directories
 file_path <- 'projects/mapbiomas-workspace/public/collection6/'
 
 ##  define files to be computed
 file_name <- c('mapbiomas_collection60_integration_v1')
+
+## set output path (local)
+output <- './table/accuracy/'
 
 ## import validation points
 validation_points = ee$FeatureCollection('projects/mapbiomas-workspace/VALIDACAO/MAPBIOMAS_100K_POINTS_utf8');
@@ -39,15 +53,15 @@ classes <- ee$Dictionary(list(
   "Formação Savânica"= 4)
 )
 
-## set recipes
-recipe_metrics <- as.data.frame(NULL)
-recipe_table <- as.data.frame(NULL)
-
 ## for each file
 for (i in 1:length(unique(file_name))) {
   print(paste0('processing file --> ', file_name[i]))
   ## read file [i]
   collection <- ee$Image(paste0(file_path, file_name[i]))
+  
+  ## set recipes
+  recipe_metrics <- as.data.frame(NULL)
+  recipe_table <- as.data.frame(NULL)
   
   ## for each year
   for(j in 1:length(unique(years))) {
@@ -57,7 +71,7 @@ for (i in 1:length(unique(file_name))) {
     collection_ij <- collection$select(paste0('classification_', years[j]))$
       remap(c(3, 4, 5, 11, 12, 29, 15, 19, 39, 20, 40, 41, 46, 47, 48, 21, 23, 24, 30, 25, 33, 31),
             c(3, 4, 3, 12, 12, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 25, 25, 25, 25, 33, 33))$
-      rename(paste0('classification_', years[1]))
+      rename(paste0('classification_', years[j]))
     
     ## get validation points
     validation_ij <- validation_points$
@@ -127,4 +141,9 @@ for (i in 1:length(unique(file_name))) {
       recipe_table <- rbind(recipe_table, confusionTable)
     }
   }
+  ## save file results
+  print('exporting results')
+  write.csv(recipe_metrics, file= paste0(output, 'metrics_', file_name[i], '.csv'))
+  write.csv(recipe_table, file= paste0(output, 'table_', file_name[i], '.csv'))
 }
+print('done, enjoy :)')
