@@ -6,15 +6,19 @@ library(rgee)
 library(rgeeExtra)
 library(reticulate)
 library(caret)
+library(reshape2)
 
 ## initialize
 ee_Initialize()
 
 ## set directories
-file_path <- 'projects/mapbiomas-workspace/public/collection6/'
-
+#file_path <- 'projects/mapbiomas-workspace/public/collection6/'
+file_path <- 'users/dh-conciani/collection7/c7-general-post/'
+  
 ##  define files to be computed
-file_name <- c('mapbiomas_collection60_integration_v1')
+#file_name <- c('mapbiomas_collection60_integration_v1')
+file_name <- c('CERRADO_col7_gapfill_v1',
+               'CERRADO_col7_gapfill_incidence_v1')
 
 ## set output path (local)
 output <- './table/accuracy/'
