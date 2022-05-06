@@ -21,7 +21,7 @@ var vis = {
 var classification = ee.Image(root + file_in)
                         .aside(print);
 
-// set functions to be applied considering different time-windows
+///////////////////////////// set rules 
 // three years 
 var rule_3yr = function(class_id, year, image) {
   // get pixels to be mask when the mid year is different of previous and next
@@ -29,7 +29,7 @@ var rule_3yr = function(class_id, year, image) {
            .and(image.select(['classification_' + year]).neq(class_id))     // current
            .and(image.select(['classification_' + year + 1]).eq(class_id)); // next
            
-  // rectify value in the mid
+  // rectify value in the current year 
   return image.select(['classification_' + year])
               .where(to_mask.eq(1), class_id);
 };
@@ -42,30 +42,40 @@ var rule_4yr = function(class_id, year, image) {
            .and(image.select(['classification_' + year + 1]).neq(class_id))   // next
            .and(image.select(['classification_' + year + 2]).eq(class_id));   // next two
   
-  // rectify value in the mid
+  // rectify value in the current year
   return image.select(['classification_' + year])
               .where(to_mask.eq(1), class_id);
 };
-                      
-                      /*
 
+// five years
+var rule_5yr = function(class_id, year, image) {
+  // get pixels to be mask when the mid years is different of previous and next
+  var to_mask = image.select(['clssification_' + year - 1]).eq(class_id)      // previous
+           .and(image.select(['classification_' + year]).neq(class_id))       // current
+           .and(image.select(['classification_' + year + 1]).neq(class_id))   // next
+           .and(image.select(['classification_' + year + 2]).neq(class_id))   // next two
+           .and(image.select(['classification_' + year + 3]).eq(class_id));   // next three
+  
+  // rectify value in the current year
+  return image.select(['classification_' + year])
+              .where(to_mask.eq(1), class_id);
+};
 
+////////////////////// set functions to apply rules over the time-series
+// five years 
+var run_5yr = function(image, class_id) {
+  // create recipe with the first year (without previous year)
+  var recipe = image.select(['classification_1985']);
+  // for each year in the window
+  ee.List.sequence({'start': 1986, 'end': 2018 }).getInfo()
+      .forEach(function(year_i){
+        // run filter
+        
+      });
+  
+  
+};
 
-var mask5 = function(valor, ano, imagem){
-  var mask = imagem.select('classification_'+ (parseInt(ano) - 1)).eq (valor)
-        .and(imagem.select('classification_'+ (ano)              ).neq(valor))
-        .and(imagem.select('classification_'+ (parseInt(ano) + 1)).neq(valor))
-        .and(imagem.select('classification_'+ (parseInt(ano) + 2)).neq(valor))
-        .and(imagem.select('classification_'+ (parseInt(ano) + 3)).eq (valor))
-  var muda_img  = imagem.select('classification_'+ (ano)              ).mask(mask.eq(1)).where(mask.eq(1), valor);  
-  var muda_img1 = imagem.select('classification_'+ (parseInt(ano) + 1)).mask(mask.eq(1)).where(mask.eq(1), valor);  
-  var muda_img2 = imagem.select('classification_'+ (parseInt(ano) + 2)).mask(mask.eq(1)).where(mask.eq(1), valor);  
-  var img_out = imagem.select('classification_'+ano).blend(muda_img).blend(muda_img1).blend(muda_img2)
-  return img_out;
-}
-var anos3 = ['1986','1987','1988','1989','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017', '2018', '2019'];
-var anos4 = ['1986','1987','1988','1989','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016', '2017', '2018'];
-var anos5 = ['1986','1987','1988','1989','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015', '2016', '2017'];
 
 var window5years = function(imagem, valor){
    var img_out = imagem.select('classification_1985')
@@ -77,6 +87,18 @@ var window5years = function(imagem, valor){
      img_out = img_out.addBands(imagem.select('classification_2020'))
    return img_out
 }
+
+                      /*
+
+
+
+
+}
+var anos3 = ['1986','1987','1988','1989','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017', '2018', '2019'];
+var anos4 = ['1986','1987','1988','1989','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016', '2017', '2018'];
+var anos5 = ['1986','1987','1988','1989','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015', '2016', '2017'];
+
+
 
 var window4years = function(imagem, valor){
    var img_out = imagem.select('classification_1985')
