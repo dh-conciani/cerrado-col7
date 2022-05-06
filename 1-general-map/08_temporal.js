@@ -143,31 +143,44 @@ var rule_4yr_deforestation = function(class_id, year, image) {
 };
 
 ////////////////////// set functions to apply rules over the time-series for deforestation
+// three years
+var run_3yr_deforestation = function(image, class_id) {
+  // create recipe with the first year (without previous year)
+  var recipe = image.select(['classification_1985']);
+   // for each year in the window
+  ee.List.sequence({'start': 1986, 'end': 2020 }).getInfo()
+      .forEach(function(year_i){
+        // run filter
+        recipe = recipe.addBands(rule_3yr_deforestation(class_id, year_i, image));
+      }
+    );
+  // insert last years (without suitable next yr to apply filter)
+  recipe = recipe.addBands(image.select(['classification_2021'])); 
+  
+  return recipe;
+};
 
+// four years
+var run_4yr_deforestation = function(image, class_id) {
+  // create recipe with the first year (without previous year)
+  var recipe = image.select(['classification_1985']);
+   // for each year in the window
+  ee.List.sequence({'start': 1986, 'end': 2019 }).getInfo()
+      .forEach(function(year_i){
+        // run filter
+        recipe = recipe.addBands(rule_4yr_deforestation(class_id, year_i, image));
+      }
+    );
+  // insert last years (without suitable next yr to apply filter)
+  recipe = recipe.addBands(image.select(['classification_2020']))
+                 .addBands(image.select(['classification_2021'])); 
+  
+  return recipe;
+};
 
                       /*
 
 
-
-
-var window4valores = function(imagem, valor){
-   var img_out = imagem.select('classification_1985')
-   for (var i_ano=0;i_ano<anos4.length; i_ano++){  
-     var ano = anos4[i_ano];  
-     img_out = img_out.addBands(mask4valores(valor,ano, imagem)) }
-     img_out = img_out.addBands(imagem.select('classification_2020'))
-     img_out = img_out.addBands(imagem.select('classification_2019'))
-   return img_out
-}
-
-var window3valores = function(imagem, valor){
-   var img_out = imagem.select('classification_1985')
-   for (var i_ano=0;i_ano<anos3.length; i_ano++){  
-     var ano = anos3[i_ano];   
-     img_out = img_out.addBands(mask3valores(valor,ano, imagem)) }
-     img_out = img_out.addBands(imagem.select('classification_2020'))
-   return img_out
-}
 
 //put "classification_2018 in the end of bands after gap fill
 var original = image_gapfill.select('classification_1985')
