@@ -21,7 +21,7 @@ var vis = {
 var classification = ee.Image(root + file_in)
                         .aside(print);
 
-///////////////////////////// set rules 
+///////////////////////////// set rules to mask mid years 
 // three years 
 var rule_3yr = function(class_id, year, image) {
   // get pixels to be mask when the mid year is different of previous and next
@@ -62,6 +62,42 @@ var rule_5yr = function(class_id, year, image) {
 };
 
 ////////////////////// set functions to apply rules over the time-series
+// three years
+var run_3yr = function(image, class_id) {
+  // create recipe with the first year (without previous year)
+  var recipe = image.select(['classification_1985']);
+  // for each year in the window
+  ee.List.sequence({'start': 1986, 'end': 2020 }).getInfo()
+      .forEach(function(year_i){
+        // run filter
+        recipe = recipe.addBands(rule_3yr(class_id, year_i, image));
+      }
+    );
+  // insert last years (without suitable next yr to apply filter)
+  recipe = recipe.addBands(image.select(['classification_2021']));
+  
+  return recipe;
+};
+
+
+// four years
+var run_4yr = function(image, class_id) {
+  // create recipe with the first year (without previous year)
+  var recipe = image.select(['classification_1985']);
+  // for each year in the window
+  ee.List.sequence({'start': 1986, 'end': 2019 }).getInfo()
+      .forEach(function(year_i){
+        // run filter
+        recipe = recipe.addBands(rule_4yr(class_id, year_i, image));
+      }
+    );
+  // insert last years (without suitable next yr to apply filter)
+  recipe = recipe.addBands(image.select(['classification_2020']))
+                 .addBands(image.select(['classification_2021']));
+  
+  return recipe;
+};
+
 // five years 
 var run_5yr = function(image, class_id) {
   // create recipe with the first year (without previous year)
@@ -70,33 +106,20 @@ var run_5yr = function(image, class_id) {
   ee.List.sequence({'start': 1986, 'end': 2018 }).getInfo()
       .forEach(function(year_i){
         // run filter
-        
-      });
+        recipe = recipe.addBands(rule_5yr(class_id, year_i, image));
+      }
+    );
+  // insert last years (without suitable next yr to apply filter)
+  recipe = recipe.addBands(image.select(['classification_2019']))
+                 .addBands(image.select(['classification_2020']))
+                 .addBands(image.select(['classification_2021']));
   
-  
+  return recipe;
 };
 
 
-var window5years = function(imagem, valor){
-   var img_out = imagem.select('classification_1985')
-   for (var i_ano=0;i_ano<anos5.length; i_ano++){  
-     var ano = anos5[i_ano];  
-     img_out = img_out.addBands(mask5(valor,ano, imagem)) }
-     img_out = img_out.addBands(imagem.select('classification_2018'))
-     img_out = img_out.addBands(imagem.select('classification_2019'))
-     img_out = img_out.addBands(imagem.select('classification_2020'))
-   return img_out
-}
 
                       /*
-
-
-
-
-}
-var anos3 = ['1986','1987','1988','1989','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017', '2018', '2019'];
-var anos4 = ['1986','1987','1988','1989','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016', '2017', '2018'];
-var anos5 = ['1986','1987','1988','1989','1990','1991','1992','1993','1994','1995','1996','1997','1998','1999','2000','2001','2002','2003','2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015', '2016', '2017'];
 
 
 
