@@ -178,20 +178,11 @@ var run_4yr_deforestation = function(image, class_id) {
   return recipe;
 };
 
+// create object to be filtered
+var to_filter = classification; 
+
                       /*
 
-
-
-//put "classification_2018 in the end of bands after gap fill
-var original = image_gapfill.select('classification_1985')
-for (var i_ano=0;i_ano<anos3.length; i_ano++){  
-  var ano = anos3[i_ano]; 
-  original = original.addBands(image_gapfill.select('classification_'+ano)) 
-}
-original = original.addBands(image_gapfill.select('classification_2020')).aside(print)
-
-
-var filtered = original
 
 //var ordem_exec = [33, 29, 12, 13,  3,  4, 21]; var version_out = '2'
 //var ordem_exec = [33, 29, 12, 13,  4,  3, 21]; var version_out = '3'
