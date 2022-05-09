@@ -178,61 +178,63 @@ var run_4yr_deforestation = function(image, class_id) {
   return recipe;
 };
 
+////////////////////// set functions to apply filter to first and last years
+// first year [1985]
+var run_3yr_first = function(class_id, image) {
+  // get pixels to be masked in the first year when next two were different
+  var to_mask = image.select(['classification_1985']).neq(class_id)
+           .and(image.select(['classification_1986']).eq(class_id))
+           .and(image.select(['classification_1987']).eq(class_id));
+           
+  // rectify value in the first year
+  var first_yr = image.select(['classification_1985'])
+                      .where(to_mask.eq(1), class_id);
+  
+  // add bands of next years
+  ee.List.sequence({'start': 1986, 'end': 2021}).getInfo()
+      .forEach(function(year_i) {
+        first_yr = first_yr.addBands(image.select(['classification_' + year_i]));
+      });
+  
+  return first_yr;
+};
+
+// last year [2021]
+var run_3yr_last = function(class_id, image) {
+  // get pixels to be masked in the last year when previous two were different
+  var to_mask = image.select(['classification_2021']).neq(class_id)
+           .and(image.select(['classification_2020']).eq(class_id))
+           .and(image.select(['classification_2019']).eq(class_id));
+           
+  // rectify value in the last year
+  var last_yr = image.select(['classification_2021'])
+                      .where(to_mask.eq(1), class_id);
+  
+  // create recipe with time series from first to last [-1]
+  var recipe = ee.Image([]);
+  // insert data into recipe
+  ee.List.sequence({'start': 1985, 'end': 2020}).getInfo()
+      .forEach(function(year_i) {
+        recipe = recipe.addBands(image.select(['classification_' + year_i]));
+      });
+  
+  // insert filtered last year
+  return recipe.addBands(last_yr);
+  
+};
+
+//////////////////////// end of functions 
+/////////////////////////////// start of conditionals 
+
 // create object to be filtered
 var to_filter = classification; 
 
                       /*
-
-
 //var ordem_exec = [33, 29, 12, 13,  3,  4, 21]; var version_out = '2'
 //var ordem_exec = [33, 29, 12, 13,  4,  3, 21]; var version_out = '3'
 //var ordem_exec = [33, 29,  3, 21, 12, 13,  4]; var version_out = '4'
 //var ordem_exec = [33, 21,  3, 29, 12, 13,  4]; var version_out = '5'
 
-
-var mask3first = function(valor, imagem){
-  var mask = imagem.select('classification_1985').neq (valor)
-        .and(imagem.select('classification_1986').eq(valor))
-        .and(imagem.select('classification_1987').eq (valor))
-  var muda_img = imagem.select('classification_1985').mask(mask.eq(1)).where(mask.eq(1), valor);  
-  var img_out = imagem.select('classification_1985').blend(muda_img)
-  img_out = img_out.addBands([imagem.select('classification_1986'),
-                              imagem.select('classification_1987'),
-                              imagem.select('classification_1988'),
-                              imagem.select('classification_1989'),
-                              imagem.select('classification_1990'),
-                              imagem.select('classification_1991'),
-                              imagem.select('classification_1992'),
-                              imagem.select('classification_1993'),
-                              imagem.select('classification_1994'),
-                              imagem.select('classification_1995'),
-                              imagem.select('classification_1996'),
-                              imagem.select('classification_1997'),
-                              imagem.select('classification_1998'),
-                              imagem.select('classification_1999'),
-                              imagem.select('classification_2000'),
-                              imagem.select('classification_2001'),
-                              imagem.select('classification_2002'),
-                              imagem.select('classification_2003'),
-                              imagem.select('classification_2004'),
-                              imagem.select('classification_2005'),
-                              imagem.select('classification_2006'),
-                              imagem.select('classification_2007'),
-                              imagem.select('classification_2008'),
-                              imagem.select('classification_2009'),
-                              imagem.select('classification_2010'),
-                              imagem.select('classification_2011'),
-                              imagem.select('classification_2012'),
-                              imagem.select('classification_2013'),
-                              imagem.select('classification_2014'),
-                              imagem.select('classification_2015'),
-                              imagem.select('classification_2016'),
-                              imagem.select('classification_2017'),
-                              imagem.select('classification_2018'),
-                              imagem.select('classification_2019'),
-                              imagem.select('classification_2020')]);
-  return img_out;
-};
 
 filtered = mask3first(12, filtered)
 filtered = mask3first(4, filtered)
@@ -240,55 +242,9 @@ filtered = mask3first(3, filtered)
 filtered = mask3first(15, filtered)
 //print(filtered)
 
-var mask3last = function(valor, imagem){
-  var mask = imagem.select('classification_2018').eq (valor)
-        .and(imagem.select('classification_2019').eq(valor))
-        .and(imagem.select('classification_2020').neq (valor))
-  var muda_img = imagem.select('classification_2019').mask(mask.eq(1)).where(mask.eq(1), valor);  
-  var img_out = imagem.select('classification_1985')
-  img_out = img_out.addBands([imagem.select('classification_1986'),
-                              imagem.select('classification_1987'),
-                              imagem.select('classification_1988'),
-                              imagem.select('classification_1989'),
-                              imagem.select('classification_1990'),
-                              imagem.select('classification_1991'),
-                              imagem.select('classification_1992'),
-                              imagem.select('classification_1993'),
-                              imagem.select('classification_1994'),
-                              imagem.select('classification_1995'),
-                              imagem.select('classification_1996'),
-                              imagem.select('classification_1997'),
-                              imagem.select('classification_1998'),
-                              imagem.select('classification_1999'),
-                              imagem.select('classification_2000'),
-                              imagem.select('classification_2001'),
-                              imagem.select('classification_2002'),
-                              imagem.select('classification_2003'),
-                              imagem.select('classification_2004'),
-                              imagem.select('classification_2005'),
-                              imagem.select('classification_2006'),
-                              imagem.select('classification_2007'),
-                              imagem.select('classification_2008'),
-                              imagem.select('classification_2009'),
-                              imagem.select('classification_2010'),
-                              imagem.select('classification_2011'),
-                              imagem.select('classification_2012'),
-                              imagem.select('classification_2013'),
-                              imagem.select('classification_2014'),
-                              imagem.select('classification_2015'),
-                              imagem.select('classification_2016'),
-                              imagem.select('classification_2017'),
-                              imagem.select('classification_2018'),
-                              imagem.select('classification_2019')]);
-  var img_out = img_out.addBands(imagem.select('classification_2020').blend(muda_img))
-  return img_out;
-}
-
 filtered = mask3last(19, filtered)
 filtered = mask3last(15, filtered)
 print(filtered)
-
-
 //regras especificas do Pantanal
 filtered = window4valores(filtered, [3, 12, 12, 12, 15])  //converte desmatamento de floresta para agro ao invés de campo
 filtered = window4valores(filtered, [3, 12, 12, 15, 15])  //converte desmatamento de floresta para agro ao invés de campo
@@ -306,39 +262,29 @@ filtered = window3valores(filtered, [3, 12, 15, 15])
 filtered = window3valores(filtered, [3, 12, 12, 15])
 filtered = window3valores(filtered, [4, 12, 15, 15])
 filtered = window3valores(filtered, [4, 12, 12, 15])
-
-
 //converte desmatamento de floresta para agro ao invés de campo
-
 filtered = window3valores(filtered, [3, 33, 3, 3])  //evita que umida vire floresta por 1 ano
 filtered = window3valores(filtered, [4, 33, 4, 4])  //evita que umida vire floresta por 1 ano
 filtered = window3valores(filtered, [12, 33, 12, 12])  //evita que umida vire floresta por 1 ano
-
 //regras gerais
 //var ordem_exec = [ 4, 12,  3, 21,  33]; 
 var ordem_exec = [4, 12, 3, 15, 19, 33]; 
 //var ordem_exec = [12,  4,  3, 21,  33]; 
-
-
 for (var i_class=0;i_class<ordem_exec.length; i_class++){  
    var id_class = ordem_exec[i_class]; 
    filtered = window5years(filtered, id_class)
    filtered = window4years(filtered, id_class)
    filtered = window3years(filtered, id_class)
 }
-
-
 var vis = {
     'bands': 'classification_2020',
     'min': 0,
     'max': 34,
     'palette': palettes.get('classification2')
 };
-
 filtered = filtered.set ("version", version_out).set ("step", "temporal");
 print(filtered)
 Map.addLayer(original, vis, 'original');
-
 Map.addLayer(filtered, vis, 'filtered');
 Export.image.toAsset({
     'image': filtered,
@@ -351,5 +297,4 @@ Export.image.toAsset({
     'scale': 30,
     'maxPixels': 1e13
 });
-
 */
