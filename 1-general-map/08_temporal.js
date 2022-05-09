@@ -240,21 +240,17 @@ to_filter = run_3yr_first(11, to_filter);
 Map.addLayer(to_filter.select(['classification_1985']), vis, 'first_filtered', false);
 
 // plot last year 
-Map.addLayer(classification.select(['classification_2021']), vis, 'last raw');
+Map.addLayer(classification.select(['classification_2021']), vis, 'last raw', false);
 
 ////////////////// filter last year
 to_filter = run_3yr_last(15, to_filter);
 to_filter = run_3yr_last(19, to_filter);
 to_filter = run_3yr_last(21, to_filter);
-Map.addLayer(to_filter.select(['classification_2021']), vis, 'last_filtered');
+Map.addLayer(to_filter.select(['classification_2021']), vis, 'last_filtered', false);
 
                       /*
 
 
-
-filtered = mask3last(19, filtered)
-filtered = mask3last(15, filtered)
-print(filtered)
 //regras especificas do Pantanal
 filtered = window4valores(filtered, [3, 12, 12, 12, 15])  //converte desmatamento de floresta para agro ao invés de campo
 filtered = window4valores(filtered, [3, 12, 12, 15, 15])  //converte desmatamento de floresta para agro ao invés de campo
