@@ -42,9 +42,9 @@ print('input', classification);
 // three years 
 var rule_3yr = function(class_id, year, image) {
   // get pixels to be mask when the mid year is different of previous and next
-  var to_mask = image.select(['clssification_' + year - 1]).eq(class_id)    // previous
+  var to_mask = image.select(['clssification_' + String(year - 1)]).eq(class_id)    // previous
            .and(image.select(['classification_' + year]).neq(class_id))     // current
-           .and(image.select(['classification_' + year + 1]).eq(class_id)); // next
+           .and(image.select(['classification_' + String(year + 1)]).eq(class_id)); // next
            
   // rectify value in the current year 
   return image.select(['classification_' + year])
@@ -54,10 +54,10 @@ var rule_3yr = function(class_id, year, image) {
 // four years 
 var rule_4yr = function(class_id, year, image) {
   // get pixels to be mask when the mid years is different of previous and next
-  var to_mask = image.select(['clssification_' + year - 1]).eq(class_id)      // previous
+  var to_mask = image.select(['clssification_' + String(year - 1)]).eq(class_id)      // previous
            .and(image.select(['classification_' + year]).neq(class_id))       // current
-           .and(image.select(['classification_' + year + 1]).neq(class_id))   // next
-           .and(image.select(['classification_' + year + 2]).eq(class_id));   // next two
+           .and(image.select(['classification_' + String(year + 1)]).neq(class_id))   // next
+           .and(image.select(['classification_' + String(year + 2)]).eq(class_id));   // next two
   
   // rectify value in the current year
   return image.select(['classification_' + year])
@@ -67,11 +67,11 @@ var rule_4yr = function(class_id, year, image) {
 // five years
 var rule_5yr = function(class_id, year, image) {
   // get pixels to be mask when the mid years is different of previous and next
-  var to_mask = image.select(['clssification_' + year - 1]).eq(class_id)      // previous
+  var to_mask = image.select(['clssification_' + String(year - 1)]).eq(class_id)      // previous
            .and(image.select(['classification_' + year]).neq(class_id))       // current
-           .and(image.select(['classification_' + year + 1]).neq(class_id))   // next
-           .and(image.select(['classification_' + year + 2]).neq(class_id))   // next two
-           .and(image.select(['classification_' + year + 3]).eq(class_id));   // next three
+           .and(image.select(['classification_' + String(year + 1)]).neq(class_id))   // next
+           .and(image.select(['classification_' + String(year + 2)]).neq(class_id))   // next two
+           .and(image.select(['classification_' + String(year + 3)]).eq(class_id));   // next three
   
   // rectify value in the current year
   return image.select(['classification_' + year])
@@ -137,9 +137,9 @@ var run_5yr = function(image, class_id) {
 ////////////////////////////// set rules to avoid deforestations from forest to grassland (or other inconsistent classes)
 // three years
 var rule_3yr_deforestation = function(class_id, year, image) {
-  var to_mask = image.select(['classification_' + year - 1]).eq(class_id[0])   // previous
+  var to_mask = image.select(['classification_' + String(year - 1)]).eq(class_id[0])   // previous
            .and(image.select(['classification_' + year]).eq(class_id[1]))      // current
-           .and(image.select(['classification_' + year + 1]).eq(class_id[2])); // next
+           .and(image.select(['classification_' + String(year + 1)]).eq(class_id[2])); // next
            
   // when transitions occurs from class_id 0 to 2, passing for the 1, use the value 3
     return image.select(['classification_' + year])
@@ -249,7 +249,7 @@ var to_filter = classification;
 // plot first year
 Map.addLayer(classification.select(['classification_1985']), vis, 'first raw', false);
 
-////////////////// filter first year
+////////////////// filter first year 
 to_filter = run_3yr_first(12, to_filter);
 to_filter = run_3yr_first(3, to_filter);
 to_filter = run_3yr_first(4, to_filter);
@@ -266,54 +266,45 @@ Map.addLayer(to_filter.select(['classification_2021']), vis, 'last_filtered', fa
 
 ////////////////// apply 'deforestation' filters
 // plot mid year
-Map.addLayer(classification.select(['classification_2010']), vis, '2010 def raw', true);
+Map.addLayer(classification.select(['classification_2010']), vis, '2010 def raw', false);
 
 ///// rules based in the cerrado ecology 
 // avoid that deforestation of forest assumes the class of 'grassland' over the transition
 to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 12, 21]);
 to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 21, 21]);
+to_filter = run_3yr_deforestation(to_filter, [3, 12, 21, 21]);
+to_filter = run_3yr_deforestation(to_filter, [3, 12, 12, 21]);
+// avoid transitions of forest assumes the class of wetland
+to_filter = run_3yr_deforestation(to_filter, [3, 11, 21, 21]);
+// avoid that deforestation of savannas assumes the class of 'grassland' over the transition
+to_filter = run_3yr_deforestation(to_filter, [4, 12, 21, 21]);
+// avoid that deforestation of wetland assumes the class of grassland
+to_filter = run_3yr_deforestation(to_filter, [11, 12, 21, 21]);
+// avoid that deforestation of grassland assumes the class of wetland
+to_filter = run_3yr_deforestation(to_filter, [12, 11, 21, 21]);
 
+Map.addLayer(to_filter.select(['classification_2010']), vis, '2010 def filtered', false);
 
-print(to_filter)
+////////////// run time window general rules
+class_ordering = [4, 12, 11, 3, 21, 33];
+
+class_ordering.forEach(function(class_i) {
+  // 5 yr
+  to_filter = run_5yr(to_filter, class_i);
+  // 4 yr
+  to_filter = run_4yr(to_filter, class_i);
+  // 3yr
+  to_filter = run_3yr(to_filter, class_i);
+});
+
+print(to_filter);
 // 
-Map.addLayer(to_filter.select(['classification_2010']), vis, '2010 def filtered', true);
 
                       /*
 
 
 
-filtered = window4valores(filtered, [4, 12, 12, 12, 15])  //converte desmatamento de floresta para agro ao invés de campo
-filtered = window4valores(filtered, [4, 12, 12, 15, 15])  //converte desmatamento de floresta para agro ao invés de campo
-filtered = window4valores(filtered, [4, 12, 12, 12, 19])  //converte desmatamento de floresta para agro ao invés de campo
-filtered = window4valores(filtered, [4, 12, 12, 19, 19])  //converte desmatamento de floresta para agro ao invés de campo
-filtered = window4valores(filtered, [19, 19, 12, 12, 12])  //converte desmatamento de floresta para agro ao invés de campo
-filtered = window4valores(filtered, [19, 19, 19, 12, 12])  //converte desmatamento de floresta para agro ao invés de campo
-filtered = window3valores(filtered, [19, 19, 12, 12])
-filtered = window3valores(filtered, [12, 19, 19, 12])
-filtered = window3valores(filtered, [3, 12, 15, 15])
-filtered = window3valores(filtered, [3, 12, 12, 15])
-filtered = window3valores(filtered, [4, 12, 15, 15])
-filtered = window3valores(filtered, [4, 12, 12, 15])
-//converte desmatamento de floresta para agro ao invés de campo
-filtered = window3valores(filtered, [3, 33, 3, 3])  //evita que umida vire floresta por 1 ano
-filtered = window3valores(filtered, [4, 33, 4, 4])  //evita que umida vire floresta por 1 ano
-filtered = window3valores(filtered, [12, 33, 12, 12])  //evita que umida vire floresta por 1 ano
-//regras gerais
-//var ordem_exec = [ 4, 12,  3, 21,  33]; 
-var ordem_exec = [4, 12, 3, 15, 19, 33]; 
-//var ordem_exec = [12,  4,  3, 21,  33]; 
-for (var i_class=0;i_class<ordem_exec.length; i_class++){  
-   var id_class = ordem_exec[i_class]; 
-   filtered = window5years(filtered, id_class)
-   filtered = window4years(filtered, id_class)
-   filtered = window3years(filtered, id_class)
-}
-var vis = {
-    'bands': 'classification_2020',
-    'min': 0,
-    'max': 34,
-    'palette': palettes.get('classification2')
-};
+
 filtered = filtered.set ("version", version_out).set ("step", "temporal");
 print(filtered)
 Map.addLayer(original, vis, 'original');
