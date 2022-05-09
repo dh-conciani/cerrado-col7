@@ -18,8 +18,25 @@ var vis = {
 };
 
 // import classification 
-var classification = ee.Image(root + file_in)
-                        .aside(print);
+var inputClassification = ee.Image(root + file_in);
+
+// define empty classification to receive data
+var classification = ee.Image([]);
+
+// remap all anthopogenic classes only to single-one [21]
+ee.List.sequence({'start': 1985, 'end': 2021}).getInfo()
+    .forEach(function(year_i) {
+      // get year [i]
+      var classification_i = inputClassification.select(['classification_' + year_i])
+        // remap
+        .remap([3, 4, 11, 12, 15, 19, 21, 25, 33],
+               [3, 4, 11, 12, 21, 21, 21, 25, 33])
+               .rename('classification_' + year_i);
+               // insert into classification
+               classification = classification.addBands(classification_i);
+    });
+    
+print('input', classification);
 
 ///////////////////////////// set rules to mask mid years 
 // three years 
@@ -243,8 +260,6 @@ Map.addLayer(to_filter.select(['classification_1985']), vis, 'first_filtered', f
 Map.addLayer(classification.select(['classification_2021']), vis, 'last raw', false);
 
 ////////////////// filter last year
-to_filter = run_3yr_last(15, to_filter);
-to_filter = run_3yr_last(19, to_filter);
 to_filter = run_3yr_last(21, to_filter);
 Map.addLayer(to_filter.select(['classification_2021']), vis, 'last_filtered', false);
 
@@ -256,8 +271,8 @@ Map.addLayer(classification.select(['classification_2010']), vis, '2010 def raw'
 ///// rules based in the cerrado ecology 
 // avoid that deforestation of forest assumes the class of 'grassland' over the transition
 to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 12, 21]);
-to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 15, 21]);
-to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 19, 21]);
+to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 21, 21]);
+
 
 print(to_filter)
 // 
