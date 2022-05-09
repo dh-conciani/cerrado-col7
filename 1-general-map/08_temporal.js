@@ -232,21 +232,25 @@ var to_filter = classification;
 // plot first year
 Map.addLayer(classification.select(['classification_1985']), vis, 'first raw', false);
 
-// filter first year
+////////////////// filter first year
 to_filter = run_3yr_first(12, to_filter);
 to_filter = run_3yr_first(3, to_filter);
 to_filter = run_3yr_first(4, to_filter);
 to_filter = run_3yr_first(11, to_filter);
-
-
 Map.addLayer(to_filter.select(['classification_1985']), vis, 'first_filtered', false);
+
+// plot last year 
+Map.addLayer(classification.select(['classification_2021']), vis, 'last raw');
+
+////////////////// filter last year
+to_filter = run_3yr_last(15, to_filter);
+to_filter = run_3yr_last(19, to_filter);
+to_filter = run_3yr_last(21, to_filter);
+Map.addLayer(to_filter.select(['classification_2021']), vis, 'last_filtered');
+
                       /*
 
 
-filtered = mask3first(4, filtered)
-filtered = mask3first(3, filtered)
-filtered = mask3first(15, filtered)
-//print(filtered)
 
 filtered = mask3last(19, filtered)
 filtered = mask3last(15, filtered)
