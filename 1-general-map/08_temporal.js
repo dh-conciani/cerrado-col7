@@ -246,29 +246,10 @@ var run_3yr_last = function(class_id, image) {
 // create object to be filtered
 var to_filter = classification; 
 
-// plot first year
-Map.addLayer(classification.select(['classification_1985']), vis, 'first raw', false);
-
-////////////////// filter first year 
-to_filter = run_3yr_first(12, to_filter);
-to_filter = run_3yr_first(3, to_filter);
-to_filter = run_3yr_first(4, to_filter);
-to_filter = run_3yr_first(11, to_filter);
-Map.addLayer(to_filter.select(['classification_1985']), vis, 'first_filtered', false);
-
-// plot last year 
-Map.addLayer(classification.select(['classification_2021']), vis, 'last raw', false);
-
-////////////////// filter last year
-to_filter = run_3yr_last(21, to_filter);
-Map.addLayer(to_filter.select(['classification_2021']), vis, 'last_filtered', false);
-
-
 ////////////////// apply 'deforestation' filters
 // plot mid year
 Map.addLayer(classification.select(['classification_2010']), vis, '2010 def raw', false);
 
-///// rules based in the cerrado ecology 
 // avoid that deforestation of forest assumes the class of 'grassland' over the transition
 to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 12, 21]);
 to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 21, 21]);
@@ -286,7 +267,7 @@ to_filter = run_3yr_deforestation(to_filter, [12, 11, 21, 21]);
 Map.addLayer(to_filter.select(['classification_2010']), vis, '2010 def filtered', false);
 
 ////////////// run time window general rules
-var class_ordering = [4, 12, 11, 3, 21, 33];
+var class_ordering = [4, 3, 12, 21, 11, 33];
 
 class_ordering.forEach(function(class_i) {
   // 5 yr
@@ -297,7 +278,23 @@ class_ordering.forEach(function(class_i) {
   to_filter = run_3yr(to_filter, class_i);
 });
 
-Map.addLayer(to_filter.select(['classification_2010']), vis, '2010 final');
+Map.addLayer(to_filter.select(['classification_2010']), vis, '2010 mid filtered');
+
+////////////////// filter first year 
+Map.addLayer(classification.select(['classification_1985']), vis, 'first raw', false);
+to_filter = run_3yr_first(12, to_filter);
+to_filter = run_3yr_first(3, to_filter);
+to_filter = run_3yr_first(4, to_filter);
+to_filter = run_3yr_first(11, to_filter);
+Map.addLayer(to_filter.select(['classification_1985']), vis, 'first_filtered', false);
+
+////////////////// filter last year
+Map.addLayer(classification.select(['classification_2021']), vis, 'last raw', false);
+to_filter = run_3yr_last(21, to_filter);
+Map.addLayer(to_filter.select(['classification_2021']), vis, 'last_filtered', false);
+Map.addLayer(to_filter, {}, 'all filtered');
+
+
 print(to_filter);
 // 
 
