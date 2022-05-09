@@ -229,14 +229,20 @@ var run_3yr_last = function(class_id, image) {
 // create object to be filtered
 var to_filter = classification; 
 
+// plot first year
+Map.addLayer(classification.select(['classification_1985']), vis, 'first raw', false);
+
+// filter first year
+to_filter = run_3yr_first(12, to_filter);
+to_filter = run_3yr_first(3, to_filter);
+to_filter = run_3yr_first(4, to_filter);
+to_filter = run_3yr_first(11, to_filter);
+
+
+Map.addLayer(to_filter.select(['classification_1985']), vis, 'first_filtered', false);
                       /*
-//var ordem_exec = [33, 29, 12, 13,  3,  4, 21]; var version_out = '2'
-//var ordem_exec = [33, 29, 12, 13,  4,  3, 21]; var version_out = '3'
-//var ordem_exec = [33, 29,  3, 21, 12, 13,  4]; var version_out = '4'
-//var ordem_exec = [33, 21,  3, 29, 12, 13,  4]; var version_out = '5'
 
 
-filtered = mask3first(12, filtered)
 filtered = mask3first(4, filtered)
 filtered = mask3first(3, filtered)
 filtered = mask3first(15, filtered)
