@@ -247,9 +247,6 @@ var run_3yr_last = function(class_id, image) {
 var to_filter = classification; 
 
 ////////////////// apply 'deforestation' filters
-// plot mid year
-Map.addLayer(classification.select(['classification_2010']), vis, '2010 def raw', false);
-
 // avoid that deforestation of forest assumes the class of 'grassland' over the transition
 to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 12, 21]);
 to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 21, 21]);
@@ -257,6 +254,9 @@ to_filter = run_3yr_deforestation(to_filter, [3, 12, 21, 21]);
 to_filter = run_3yr_deforestation(to_filter, [3, 12, 12, 21]);
 // avoid transitions of forest assumes the class of wetland
 to_filter = run_3yr_deforestation(to_filter, [3, 11, 21, 21]);
+// avoid transitions of forest assumes the class of wetland
+to_filter = run_3yr_deforestation(to_filter, [3, 11, 11, 3]);
+to_filter = run_4yr_deforestation(to_filter, [3, 11, 11, 11, 3]);
 // avoid that deforestation of savannas assumes the class of 'grassland' over the transition
 to_filter = run_3yr_deforestation(to_filter, [4, 12, 21, 21]);
 // avoid that deforestation of wetland assumes the class of grassland
@@ -264,10 +264,8 @@ to_filter = run_3yr_deforestation(to_filter, [11, 12, 21, 21]);
 // avoid that deforestation of grassland assumes the class of wetland
 to_filter = run_3yr_deforestation(to_filter, [12, 11, 21, 21]);
 
-Map.addLayer(to_filter.select(['classification_2010']), vis, '2010 def filtered', false);
-
 ////////////// run time window general rules
-var class_ordering = [4, 3, 12, 21, 11, 33];
+var class_ordering = [4, 3, 12, 11, 21, 33];
 
 class_ordering.forEach(function(class_i) {
   // 5 yr
@@ -278,44 +276,30 @@ class_ordering.forEach(function(class_i) {
   to_filter = run_3yr(to_filter, class_i);
 });
 
-Map.addLayer(to_filter.select(['classification_2010']), vis, '2010 mid filtered');
-
 ////////////////// filter first year 
-Map.addLayer(classification.select(['classification_1985']), vis, 'first raw', false);
 to_filter = run_3yr_first(12, to_filter);
 to_filter = run_3yr_first(3, to_filter);
 to_filter = run_3yr_first(4, to_filter);
 to_filter = run_3yr_first(11, to_filter);
-Map.addLayer(to_filter.select(['classification_1985']), vis, 'first_filtered', false);
 
 ////////////////// filter last year
-Map.addLayer(classification.select(['classification_2021']), vis, 'last raw', false);
 to_filter = run_3yr_last(21, to_filter);
-Map.addLayer(to_filter.select(['classification_2021']), vis, 'last_filtered', false);
-Map.addLayer(to_filter, {}, 'all filtered');
 
+// insert metadata
+print('filtered', to_filter);
+//to_filter = to_filter.set("version", version_out);
 
-print(to_filter);
-// 
+Map.addLayer(classification.select(['classification_2010']), vis, 'classification 2010');
+Map.addLayer(to_filter.select(['classification_2010']), vis, 'filtered 2010');
 
-                      /*
-
-
-
-
-filtered = filtered.set ("version", version_out).set ("step", "temporal");
-print(filtered)
-Map.addLayer(original, vis, 'original');
-Map.addLayer(filtered, vis, 'filtered');
 Export.image.toAsset({
-    'image': filtered,
-    'description': file_out + version_out,
-    'assetId': dirout + file_out + version_out,
+    'image': to_filter,
+    'description': 'CERRADO_col7_gapfill_incidence_temporal_v' + version_out,
+    'assetId': root +  'CERRADO_col7_gapfill_incidence_temporal_v' + version_out,
     'pyramidingPolicy': {
         '.default': 'mode'
     },
-    'region': filtered.geometry(),
+    'region': classification.geometry(),
     'scale': 30,
     'maxPixels': 1e13
 });
-*/
