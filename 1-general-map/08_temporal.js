@@ -42,7 +42,7 @@ print('input', classification);
 // three years 
 var rule_3yr = function(class_id, year, image) {
   // get pixels to be mask when the mid year is different of previous and next
-  var to_mask = image.select(['clssification_' + String(year - 1)]).eq(class_id)    // previous
+  var to_mask = image.select(['classification_' + String(year - 1)]).eq(class_id)    // previous
            .and(image.select(['classification_' + year]).neq(class_id))     // current
            .and(image.select(['classification_' + String(year + 1)]).eq(class_id)); // next
            
@@ -54,7 +54,7 @@ var rule_3yr = function(class_id, year, image) {
 // four years 
 var rule_4yr = function(class_id, year, image) {
   // get pixels to be mask when the mid years is different of previous and next
-  var to_mask = image.select(['clssification_' + String(year - 1)]).eq(class_id)      // previous
+  var to_mask = image.select(['classification_' + String(year - 1)]).eq(class_id)      // previous
            .and(image.select(['classification_' + year]).neq(class_id))       // current
            .and(image.select(['classification_' + String(year + 1)]).neq(class_id))   // next
            .and(image.select(['classification_' + String(year + 2)]).eq(class_id));   // next two
@@ -67,7 +67,7 @@ var rule_4yr = function(class_id, year, image) {
 // five years
 var rule_5yr = function(class_id, year, image) {
   // get pixels to be mask when the mid years is different of previous and next
-  var to_mask = image.select(['clssification_' + String(year - 1)]).eq(class_id)      // previous
+  var to_mask = image.select(['classification_' + String(year - 1)]).eq(class_id)      // previous
            .and(image.select(['classification_' + year]).neq(class_id))       // current
            .and(image.select(['classification_' + String(year + 1)]).neq(class_id))   // next
            .and(image.select(['classification_' + String(year + 2)]).neq(class_id))   // next two
@@ -286,7 +286,7 @@ to_filter = run_3yr_deforestation(to_filter, [12, 11, 21, 21]);
 Map.addLayer(to_filter.select(['classification_2010']), vis, '2010 def filtered', false);
 
 ////////////// run time window general rules
-class_ordering = [4, 12, 11, 3, 21, 33];
+var class_ordering = [4, 12, 11, 3, 21, 33];
 
 class_ordering.forEach(function(class_i) {
   // 5 yr
@@ -297,6 +297,7 @@ class_ordering.forEach(function(class_i) {
   to_filter = run_3yr(to_filter, class_i);
 });
 
+Map.addLayer(to_filter.select(['classification_2010']), vis, '2010 final');
 print(to_filter);
 // 
 
