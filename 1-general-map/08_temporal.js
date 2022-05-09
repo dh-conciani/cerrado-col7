@@ -248,6 +248,17 @@ to_filter = run_3yr_last(19, to_filter);
 to_filter = run_3yr_last(21, to_filter);
 Map.addLayer(to_filter.select(['classification_2021']), vis, 'last_filtered', false);
 
+
+////////////////// apply 'deforestation' filters
+// plot mid year
+Map.addLayer(classification.select(['classification_2010']), vis, '2010 def raw', true);
+
+///// rules based in the cerrado ecology 
+//to_filter = run_4yr_deforestation({to_filter, )
+
+// 
+Map.addLayer(to_filter.select(['classification_2010']), vis, '2010 def filtered', true);
+
                       /*
 
 
