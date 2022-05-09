@@ -131,10 +131,10 @@ var rule_3yr_deforestation = function(class_id, year, image) {
 
 // four years
 var rule_4yr_deforestation = function(class_id, year, image) {
-  var to_mask = image.select(['classification_' + year - 1]).eq(class_id[0])   // previous
+  var to_mask = image.select(['classification_' + String(year - 1)]).eq(class_id[0])   // previous
            .and(image.select(['classification_' + year]).eq(class_id[1]))      // current
-           .and(image.select(['classification_' + year + 1]).eq(class_id[2]))  // next
-           .and(image.select(['classification_' + year + 2]).eq(class_id[3])); // next
+           .and(image.select(['classification_' + String(year + 1)]).eq(class_id[2]))  // next
+           .and(image.select(['classification_' + String(year + 2)]).eq(class_id[3])); // next
 
            
   // when transitions occurs from class_id 0 to 3, passing for the 1 or 2, use the value 4
@@ -254,19 +254,19 @@ Map.addLayer(to_filter.select(['classification_2021']), vis, 'last_filtered', fa
 Map.addLayer(classification.select(['classification_2010']), vis, '2010 def raw', true);
 
 ///// rules based in the cerrado ecology 
-//to_filter = run_4yr_deforestation({to_filter, )
+// avoid that deforestation of forest assumes the class of 'grassland' over the transition
+to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 12, 21]);
+to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 15, 21]);
+to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 19, 21]);
 
+print(to_filter)
 // 
 Map.addLayer(to_filter.select(['classification_2010']), vis, '2010 def filtered', true);
 
                       /*
 
 
-//regras especificas do Pantanal
-filtered = window4valores(filtered, [3, 12, 12, 12, 15])  //converte desmatamento de floresta para agro ao invés de campo
-filtered = window4valores(filtered, [3, 12, 12, 15, 15])  //converte desmatamento de floresta para agro ao invés de campo
-filtered = window4valores(filtered, [3, 12, 12, 12, 19])  //converte desmatamento de floresta para agro ao invés de campo
-filtered = window4valores(filtered, [3, 12, 12, 19, 19])  //converte desmatamento de floresta para agro ao invés de campo
+
 filtered = window4valores(filtered, [4, 12, 12, 12, 15])  //converte desmatamento de floresta para agro ao invés de campo
 filtered = window4valores(filtered, [4, 12, 12, 15, 15])  //converte desmatamento de floresta para agro ao invés de campo
 filtered = window4valores(filtered, [4, 12, 12, 12, 19])  //converte desmatamento de floresta para agro ao invés de campo
