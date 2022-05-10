@@ -8,7 +8,7 @@ var root = 'users/dh-conciani/collection7/c7-general-post/';
 var file_in = 'CERRADO_col7_gapfill_incidence_v1';
 
 // set metadata to export 
-var version_out = '1';
+var version_out = '2';
 
 // import mapbiomas color ramp
 var vis = {
@@ -246,6 +246,15 @@ var run_3yr_last = function(class_id, image) {
 // create object to be filtered
 var to_filter = classification; 
 
+////////////////// filter first year 
+to_filter = run_3yr_first(12, to_filter);
+to_filter = run_3yr_first(3, to_filter);
+to_filter = run_3yr_first(4, to_filter);
+to_filter = run_3yr_first(11, to_filter);
+
+////////////////// filter last year
+to_filter = run_3yr_last(21, to_filter);
+
 ////////////////// apply 'deforestation' filters
 // avoid that deforestation of forest assumes the class of 'grassland' over the transition
 to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 12, 21]);
@@ -276,14 +285,7 @@ class_ordering.forEach(function(class_i) {
   to_filter = run_3yr(to_filter, class_i);
 });
 
-////////////////// filter first year 
-to_filter = run_3yr_first(12, to_filter);
-to_filter = run_3yr_first(3, to_filter);
-to_filter = run_3yr_first(4, to_filter);
-to_filter = run_3yr_first(11, to_filter);
 
-////////////////// filter last year
-to_filter = run_3yr_last(21, to_filter);
 
 // insert metadata
 print('filtered', to_filter);
