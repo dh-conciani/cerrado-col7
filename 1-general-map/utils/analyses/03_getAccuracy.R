@@ -19,8 +19,9 @@ file_path <- 'users/dh-conciani/collection7/c7-general-post/'
 ##  define files to be computed
 # 'mapbiomas_collection60_integration_v1'
 # 'CERRADO_col6_gapfill_incid_temporal_spatial_freq_v8'
-file_name <- c('CERRADO_col7_gapfill_v1',
-               'CERRADO_col7_gapfill_incidence_v1')
+file_name <- c(#'CERRADO_col7_gapfill_v1',
+               #'CERRADO_col7_gapfill_incidence_v1',
+                'CERRADO_col7_gapfill_incidence_temporal_v1')
 
 ## set output path (local)
 output <- './table/accuracy/'
