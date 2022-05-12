@@ -33,7 +33,7 @@ global <- subset(recipe, variable == "Accuracy")
 ggplot(data= global, mapping= aes(x= year, y= value, colour= file)) +
   stat_summary(fun='mean', geom= 'line', alpha= .6) +
   stat_summary(fun='mean', geom= 'point') +
-  scale_colour_manual(values=c('orange', 'red', 'black')) +
+  scale_colour_manual(values=c('orange', 'red', 'black', 'green')) +
   theme_bw() +
   xlab(NULL) +
   ylab('Global accuracy')
@@ -57,7 +57,7 @@ per_class$variable <- gsub('Class: 3', 'Forest',
 ggplot(data= per_class, mapping= aes(x= year, y= value, colour= file)) +
   stat_summary(fun='mean', geom= 'line', alpha= .6) +
   stat_summary(fun='mean', geom= 'point') +
-  scale_colour_manual(values=c('orange', 'red', 'black')) +
+  scale_colour_manual(values=c('orange', 'red', 'black', 'green')) +
   facet_wrap(~variable, scales= 'free_y') +
   theme_bw() +
   xlab(NULL) +
