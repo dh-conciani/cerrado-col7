@@ -11,7 +11,10 @@ var root = 'users/dh-conciani/collection7/c7-general-post/';
 var asset = [
   //root + 'CERRADO_col7_gapfill_v1',
   //root + 'CERRADO_col7_gapfill_incidence_v1'
-  root + 'CERRADO_col7_gapfill_incidence_temporal_v1'
+  //root + 'CERRADO_col7_gapfill_incidence_temporal_v1'
+  root + 'CERRADO_col7_gapfill_incidence_temporal_v2',
+  root + 'CERRADO_col7_gapfill_incidence_temporal_spatial_v2',
+  root + 'CERRADO_col7_gapfill_incidence_temporal_spatial_v3'
   ];
 
 // define classification regions 
