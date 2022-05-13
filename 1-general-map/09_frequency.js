@@ -34,7 +34,7 @@ var filterFreq = function(image) {
   var wetland = image.eq(11).expression(exp);
   var grassland = image.eq(12).expression(exp);
 
-  // select pixels that were native vegetation at least 90% of the time series
+  // select pixels that were native vegetation at least 95% of the time series
   var stable_native = ee.Image(0).where(forest
                                    .add(savanna)
                                    .add(wetland)
@@ -42,8 +42,11 @@ var filterFreq = function(image) {
                                    .gte(90), 1);
 
   // stabilize native class when:
-  var filtered = ee.Image(0).where(stable_native.eq(1).and(forest.gt(80)), 3);
-  
+  var filtered = ee.Image(0).where(stable_native.eq(1).and(forest.gte(75)), 3)
+                            .where(stable_native.eq(1).and(wetland.gte(50)), 11)
+                            .where(stable_native.eq(1).and(savanna.gt(50)), 4)
+                            .where(stable_native.eq(1).and(grassland.gt(50)), 12);
+
   // get only pixels to be filtered
   filtered = filtered.updateMask(filtered.neq(0));
   
