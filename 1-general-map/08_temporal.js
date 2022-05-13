@@ -8,7 +8,7 @@ var root = 'users/dh-conciani/collection7/c7-general-post/';
 var file_in = 'CERRADO_col7_gapfill_incidence_v1';
 
 // set metadata to export 
-var version_out = '2';
+var version_out = '3';
 
 // import mapbiomas color ramp
 var vis = {
@@ -84,7 +84,7 @@ var run_3yr = function(image, class_id) {
   // create recipe with the first year (without previous year)
   var recipe = image.select(['classification_1985']);
   // for each year in the window
-  ee.List.sequence({'start': 1986, 'end': 2020 }).getInfo()
+  ee.List.sequence({'start': 2020, 'end': 1986, 'step':-1}).getInfo()
       .forEach(function(year_i){
         // run filter
         recipe = recipe.addBands(rule_3yr(class_id, year_i, image));
@@ -102,7 +102,7 @@ var run_4yr = function(image, class_id) {
   // create recipe with the first year (without previous year)
   var recipe = image.select(['classification_1985']);
   // for each year in the window
-  ee.List.sequence({'start': 1986, 'end': 2019 }).getInfo()
+  ee.List.sequence({'start': 2019, 'end': 1986, 'step':-1}).getInfo()
       .forEach(function(year_i){
         // run filter
         recipe = recipe.addBands(rule_4yr(class_id, year_i, image));
@@ -120,7 +120,7 @@ var run_5yr = function(image, class_id) {
   // create recipe with the first year (without previous year)
   var recipe = image.select(['classification_1985']);
   // for each year in the window
-  ee.List.sequence({'start': 1986, 'end': 2018 }).getInfo()
+  ee.List.sequence({'start': 2018, 'end': 1986, 'step':-1}).getInfo()
       .forEach(function(year_i){
         // run filter
         recipe = recipe.addBands(rule_5yr(class_id, year_i, image));
@@ -246,15 +246,6 @@ var run_3yr_last = function(class_id, image) {
 // create object to be filtered
 var to_filter = classification; 
 
-////////////////// filter first year 
-to_filter = run_3yr_first(12, to_filter);
-to_filter = run_3yr_first(3, to_filter);
-to_filter = run_3yr_first(4, to_filter);
-to_filter = run_3yr_first(11, to_filter);
-
-////////////////// filter last year
-to_filter = run_3yr_last(21, to_filter);
-
 ////////////////// apply 'deforestation' filters
 // avoid that deforestation of forest assumes the class of 'grassland' over the transition
 to_filter = run_4yr_deforestation(to_filter, [3, 12, 12, 12, 21]);
@@ -285,6 +276,14 @@ class_ordering.forEach(function(class_i) {
   to_filter = run_3yr(to_filter, class_i);
 });
 
+////////////////// filter first year 
+to_filter = run_3yr_first(12, to_filter);
+to_filter = run_3yr_first(3, to_filter);
+to_filter = run_3yr_first(4, to_filter);
+to_filter = run_3yr_first(11, to_filter);
+
+////////////////// filter last year
+to_filter = run_3yr_last(21, to_filter);
 
 
 // insert metadata
