@@ -12,9 +12,10 @@ var asset = [
   //root + 'CERRADO_col7_gapfill_v1',
   //root + 'CERRADO_col7_gapfill_incidence_v1'
   //root + 'CERRADO_col7_gapfill_incidence_temporal_v1'
-  root + 'CERRADO_col7_gapfill_incidence_temporal_v2',
-  root + 'CERRADO_col7_gapfill_incidence_temporal_spatial_v2',
-  root + 'CERRADO_col7_gapfill_incidence_temporal_spatial_v3'
+  //root + 'CERRADO_col7_gapfill_incidence_temporal_v2',
+   root + 'CERRADO_col7_gapfill_incidence_temporal_v3',
+  //root + 'CERRADO_col7_gapfill_incidence_temporal_spatial_v2',
+  //root + 'CERRADO_col7_gapfill_incidence_temporal_spatial_v3'
   ];
 
 // define classification regions 
