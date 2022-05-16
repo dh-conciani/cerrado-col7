@@ -8,7 +8,7 @@ var root = 'users/dh-conciani/collection7/c7-general-post/';
 var file_in = 'CERRADO_col7_gapfill_incidence_v1';
 
 // set metadata to export 
-var version_out = '3';
+var version_out = '4';
 
 // import mapbiomas color ramp
 var vis = {
@@ -43,8 +43,8 @@ print('input', classification);
 var rule_3yr = function(class_id, year, image) {
   // get pixels to be mask when the mid year is different of previous and next
   var to_mask = image.select(['classification_' + String(year - 1)]).eq(class_id)    // previous
-           .and(image.select(['classification_' + year]).neq(class_id))     // current
-           .and(image.select(['classification_' + String(year + 1)]).eq(class_id)); // next
+           .and(image.select(['classification_' + year]).neq(class_id))              // current
+           .and(image.select(['classification_' + String(year + 1)]).eq(class_id));  // next
            
   // rectify value in the current year 
   return image.select(['classification_' + year])
@@ -55,9 +55,9 @@ var rule_3yr = function(class_id, year, image) {
 var rule_4yr = function(class_id, year, image) {
   // get pixels to be mask when the mid years is different of previous and next
   var to_mask = image.select(['classification_' + String(year - 1)]).eq(class_id)      // previous
-           .and(image.select(['classification_' + year]).neq(class_id))       // current
-           .and(image.select(['classification_' + String(year + 1)]).neq(class_id))   // next
-           .and(image.select(['classification_' + String(year + 2)]).eq(class_id));   // next two
+           .and(image.select(['classification_' + year]).neq(class_id))                // current
+           .and(image.select(['classification_' + String(year + 1)]).neq(class_id))    // next
+           .and(image.select(['classification_' + String(year + 2)]).eq(class_id));    // next two
   
   // rectify value in the current year
   return image.select(['classification_' + year])
@@ -68,10 +68,10 @@ var rule_4yr = function(class_id, year, image) {
 var rule_5yr = function(class_id, year, image) {
   // get pixels to be mask when the mid years is different of previous and next
   var to_mask = image.select(['classification_' + String(year - 1)]).eq(class_id)      // previous
-           .and(image.select(['classification_' + year]).neq(class_id))       // current
-           .and(image.select(['classification_' + String(year + 1)]).neq(class_id))   // next
-           .and(image.select(['classification_' + String(year + 2)]).neq(class_id))   // next two
-           .and(image.select(['classification_' + String(year + 3)]).eq(class_id));   // next three
+           .and(image.select(['classification_' + year]).neq(class_id))                // current
+           .and(image.select(['classification_' + String(year + 1)]).neq(class_id))    // next
+           .and(image.select(['classification_' + String(year + 2)]).neq(class_id))    // next two
+           .and(image.select(['classification_' + String(year + 3)]).eq(class_id));    // next three
   
   // rectify value in the current year
   return image.select(['classification_' + year])
@@ -84,7 +84,7 @@ var run_3yr = function(image, class_id) {
   // create recipe with the first year (without previous year)
   var recipe = image.select(['classification_1985']);
   // for each year in the window
-  ee.List.sequence({'start': 2020, 'end': 1986, 'step':-1}).getInfo()
+  ee.List.sequence({'start': 1986, 'end': 2020}).getInfo()
       .forEach(function(year_i){
         // run filter
         recipe = recipe.addBands(rule_3yr(class_id, year_i, image));
@@ -102,7 +102,7 @@ var run_4yr = function(image, class_id) {
   // create recipe with the first year (without previous year)
   var recipe = image.select(['classification_1985']);
   // for each year in the window
-  ee.List.sequence({'start': 2019, 'end': 1986, 'step':-1}).getInfo()
+  ee.List.sequence({'start': 1986, 'end': 2019}).getInfo()
       .forEach(function(year_i){
         // run filter
         recipe = recipe.addBands(rule_4yr(class_id, year_i, image));
@@ -120,7 +120,7 @@ var run_5yr = function(image, class_id) {
   // create recipe with the first year (without previous year)
   var recipe = image.select(['classification_1985']);
   // for each year in the window
-  ee.List.sequence({'start': 2018, 'end': 1986, 'step':-1}).getInfo()
+  ee.List.sequence({'start': 1986, 'end': 2018}).getInfo()
       .forEach(function(year_i){
         // run filter
         recipe = recipe.addBands(rule_5yr(class_id, year_i, image));
@@ -138,7 +138,7 @@ var run_5yr = function(image, class_id) {
 // three years
 var rule_3yr_deforestation = function(class_id, year, image) {
   var to_mask = image.select(['classification_' + String(year - 1)]).eq(class_id[0])   // previous
-           .and(image.select(['classification_' + year]).eq(class_id[1]))      // current
+           .and(image.select(['classification_' + year]).eq(class_id[1]))              // current
            .and(image.select(['classification_' + String(year + 1)]).eq(class_id[2])); // next
            
   // when transitions occurs from class_id 0 to 2, passing for the 1, use the value 3
