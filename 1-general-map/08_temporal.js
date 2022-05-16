@@ -8,7 +8,7 @@ var root = 'users/dh-conciani/collection7/c7-general-post/';
 var file_in = 'CERRADO_col7_gapfill_incidence_v1';
 
 // set metadata to export 
-var version_out = '4';
+var version_out = '1';
 
 // import mapbiomas color ramp
 var vis = {
