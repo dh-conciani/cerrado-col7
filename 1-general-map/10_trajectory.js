@@ -15,7 +15,8 @@ var classIds = [
     [3],      // forest
     [4],      // savanna
     [11],     // wetland
-    [12]      // grassland
+    [12],      // grassland
+    [3, 4, 11, 12] // native
 ];
 
 var periods = [
@@ -74,7 +75,7 @@ var calculateNumberOfPresence = function (image) {
 var visParams = {
     'number_of_presence': {
         'min': 0,
-        'max': 36,
+        'max': 37,
         'palette': [
             "#ffffff",
             "#fff5f0",
@@ -145,6 +146,9 @@ var visParams = {
  */
 // all lulc images
 var image = ee.Image(asset);
+
+// create recipe to receive trajectories
+var recipe = ee.Image([]);
 
 // for each period in list
 periods.forEach(
@@ -229,7 +233,10 @@ periods.forEach(
 
                 Map.addLayer(nPresence, visParams.number_of_presence, period + ' number of years of presence ' + classList, false);
                 Map.addLayer(trajectories, visParams.trajectories, period + ' trajectories ' + classList);
-
+                
+                // insert into recipe
+                recipe = recipe.addBands(nPresence.rename('presence_' + classList))
+                               .addBands(trajectories.rename('trajectories_' + classList));
             }
         );
     }
@@ -886,6 +893,7 @@ var Chart = {
         "2017-2018",
         "2018-2019",
         "2019-2020",
+        "2020-2021"
     ],
 
     loadData: function () {
@@ -1037,12 +1045,5 @@ Map.setOptions({
     }
 });
 
-// Alternative palette
-// ["#c8c8c8", 1, "Ab-Ab Ch=0"],
-// ["#999999", 2, "Pr-Pr Ch=0"],
-// ["#00598d", 3, "Ab-Pr Ch=1"],
-// ["#9d006d", 4, "Pr-Ab Ch=1"],
-// ["#02d6f2", 5, "Ab-Pr Ch>2"],
-// ["#ff4dd5", 6, "Pr-Ab Ch>2"],
-// ["#f58700", 7, "Ab-Ab Ch>1"],
-// ["#ffbf70", 8, "Pr-Pr Ch>1"],
+// apply filters
+print(recipe);
