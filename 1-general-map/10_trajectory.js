@@ -1045,5 +1045,14 @@ Map.setOptions({
     }
 });
 
+// get classification regions
+var region = ee.FeatureCollection('users/dh-conciani/collection7/classification_regions/vector');
+
+// get validation points
+var validation = ee.FeatureCollection('projects/mapbiomas-workspace/VALIDACAO/MAPBIOMAS_100K_POINTS_utf8');
+
+// get problematic regions
+Map.addLayer(validation.filterBounds(region.filterMetadata('mapb', 'equals', 10)), {}, 'reg')
+
 // apply filters
 print(recipe);
