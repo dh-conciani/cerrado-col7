@@ -5,10 +5,10 @@
 var root = 'users/dh-conciani/collection7/c7-general-post/';
 
 // define input file 
-var file_in = 'CERRADO_col7_gapfill_incidence_temporal_v1';
+var file_in = 'CERRADO_col7_gapfill_incidence_temporal_frequency_v4';
 
 // define output version 
-var version_out = 3;
+var version_out = 5;
 
 // read image
 var classification = ee.Image(root + file_in);
@@ -94,8 +94,8 @@ Map.addLayer(recipe.select(['classification_2010']), vis, 'filtered 2010 - round
 // export as GEE asset
 Export.image.toAsset({
     'image': recipe,
-    'description': 'CERRADO_col7_gapfill_incidence_temporal_spatial_v' + version_out,
-    'assetId': root + 'CERRADO_col7_gapfill_incidence_temporal_spatial_v' + version_out,
+    'description': 'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_v' + version_out,
+    'assetId': root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_v' + version_out,
     'pyramidingPolicy': {
         '.default': 'mode'
     },
