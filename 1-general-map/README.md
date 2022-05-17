@@ -29,6 +29,12 @@
   * code optimization (from 240 to 83 lines)
   * dont use wetland as mode filter 
 
+## 8_temporal.js:
+  * rewriten to new sintax 
+  * rules reviewed and optimized following cerrado ecology
+  * wetlands included 
+ 
+ 
 
 
 
