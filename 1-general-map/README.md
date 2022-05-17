@@ -34,6 +34,13 @@
   * rules reviewed and optimized following cerrado ecology
   * wetlands included 
  
+ ## 9_frequency.js:
+  * stabilize pixels that are native vegetation for at least 95% of the time
+
+ 
+ ## 10_spatial.js:
+  * double filtering
+  * minimum mapping area equals to 0.45 ha
  
 
 
