@@ -25,11 +25,12 @@ ee.List.sequence({'start': 1985, 'end': 2020}).getInfo()
       var mapbiomas_i = mapbiomas.select(['classification_' + year_i])
         // remap 
         .remap([3, 4, 5, 9,  11, 12, 29, 15, 19, 39, 20, 40, 41, 46, 47, 48, 21, 23, 24, 30, 25, 33, 31],
-               [3, 4, 3, 21, 11, 12, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 15, 25, 25, 25, 25, 33, 33])
+               [3, 4, 3, 21, 11, 12, 25, 21, 21, 21, 21, 21, 21, 21, 21, 21, 15, 25, 25, 25, 15, 33, 33])
                .rename('classification_' + year_i)
                .updateMask(file_in_i);
       // insert anthropogenic from mapbiomas over file_i
-      file_in_i = file_in_i.blend(mapbiomas_i.updateMask(mapbiomas_i.eq(21)));
+      file_in_i = file_in_i.blend(mapbiomas_i.updateMask(mapbiomas_i.eq(21)))
+                            .blend(mapbiomas_i.updateMask(mapbiomas_i.eq(25)));
       // store into recipe
       recipe = recipe.addBands(file_in_i);
     });
