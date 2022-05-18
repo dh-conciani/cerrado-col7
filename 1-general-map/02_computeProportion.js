@@ -14,7 +14,7 @@ var dirout = 'users/dh-conciani/collection7/sample/area';
 var regionsCollection = ee.FeatureCollection('users/dh-conciani/collection7/classification_regions/vector');
 
 // set option (avaliable are 'year' or 'stable')
-var option = 'stable' ; 
+var option = 'year' ; 
 
 // if option equal to year
 if (option == 'year') {
