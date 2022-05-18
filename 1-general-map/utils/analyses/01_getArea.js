@@ -18,7 +18,8 @@ var asset = [
   //root + 'CERRADO_col7_gapfill_incidence_temporal_spatial_v3'
   //root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_v3'
   //root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_v4'
-  root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_v5'
+  // root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_v5'
+  root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_integration_v5'
   ];
 
 // define classification regions 
