@@ -124,7 +124,7 @@ print('grassland', training.filterMetadata('class', 'equals', 12).size());
 print('agriculture', training.filterMetadata('class', 'equals', 19).size());
 
 // merge with rocky samples
-training = training.merge(rocky_samples);
+training = ee.FeatureCollection(training).merge(rocky_samples);
 
 // export as GEE asset
 Export.table.toAsset({'collection': training,
