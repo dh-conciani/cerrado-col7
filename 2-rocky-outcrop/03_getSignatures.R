@@ -35,6 +35,11 @@ samples_rocky <- ee$FeatureCollection('users/dh-conciani/collection7/rocky/sampl
 ## merge to get samples dataset 
 samples <- samples_non_rocky$merge(samples_rocky);
 
+## compute random column
+samples <- samples$randomColumn()
+## subset 70% randomly
+samples <- samples$filter(ee$Filter$lt('random', 0.6))
+
 ## define years to extract spectral signatures (temporal operator)
 years <- unique(mosaic$aggregate_array('year')$getInfo())
 
@@ -138,4 +143,3 @@ for (j in 1:length(years)) {
   print ('========================================')
   
 }
-
