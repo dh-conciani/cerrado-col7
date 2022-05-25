@@ -2,7 +2,7 @@
 // dhemerson.costa@ipam.org.br
 
 // reference proportion
-var file_in = ee.FeatureCollection('users/dh-conciani/collection7/rocky/sample/area/stable_v1');
+var file_in = ee.FeatureCollection('users/dh-conciani/collection7/rocky/sample/area/stable_v2');
 
 // area of interest for AOIS
 var aoi_vec = ee.FeatureCollection('users/dh-conciani/collection7/rocky/masks/aoi_v1');
