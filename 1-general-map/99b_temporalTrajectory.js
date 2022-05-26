@@ -5,10 +5,10 @@
 var root = 'users/dh-conciani/collection7/c7-general-post/';
 
 // set file to be processed
-var file_in = 'CERRADO_col7_gapfill_incidence_v1';
+var file_in = 'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_v5';
 
 // set metadata to export 
-var version_out = '1';
+var version_out = '5';
 
 // import mapbiomas color ramp
 var vis = {
@@ -136,3 +136,6 @@ to_filter = run_3yr_deforestation(to_filter, [4, 3, 12, 4]);
 to_filter = run_3yr_deforestation(to_filter, [3, 11, 4, 3]);
 to_filter = run_3yr_deforestation(to_filter, [12, 4, 21, 12]);
 to_filter = run_3yr_deforestation(to_filter, [12, 21, 4 ,12]);
+
+Map.addLayer(inputClassification.select(['classification_2010']), vis, 'input')
+Map.addLayer(to_filter.select(['classification_2010']), vis, 'filtered')
