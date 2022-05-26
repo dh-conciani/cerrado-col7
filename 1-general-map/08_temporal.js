@@ -8,7 +8,7 @@ var root = 'users/dh-conciani/collection7/c7-general-post/';
 var file_in = 'CERRADO_col7_gapfill_incidence_v1';
 
 // set metadata to export 
-var version_out = '2';
+var version_out = '1';
 
 // import mapbiomas color ramp
 var vis = {
@@ -273,59 +273,6 @@ class_ordering.forEach(function(class_i) {
   to_filter = run_3yr(to_filter, class_i);
 });
 
-// run custom filters
-// 4 yr
-to_filter = run_4yr_deforestation(to_filter, [4, 21, 25, 3, 4]);
-to_filter = run_4yr_deforestation(to_filter, [12, 25, 11, 3, 12]);
-to_filter = run_4yr_deforestation(to_filter, [4, 25, 11, 3, 12]);
-to_filter = run_4yr_deforestation(to_filter, [3, 12, 25, 25, 3]);
-to_filter = run_4yr_deforestation(to_filter, [3, 25, 25, 4, 3]);
-to_filter = run_4yr_deforestation(to_filter, [12, 25, 25, 4, 12]);
-to_filter = run_4yr_deforestation(to_filter, [12, 4, 4, 11, 12]);
-to_filter = run_4yr_deforestation(to_filter, [11, 3,  3, 3, 11]);
-to_filter = run_4yr_deforestation(to_filter, [11, 3, 3, 11, 11]);
-to_filter = run_4yr_deforestation(to_filter, [3, 21, 12, 25, 12]);
-to_filter = run_4yr_deforestation(to_filter, [25, 12, 12, 25, 25]);
-to_filter = run_4yr_deforestation(to_filter, [3, 21, 21, 11, 3]);
-to_filter = run_4yr_deforestation(to_filter, [4, 12 ,12, 3, 4]);
-to_filter = run_4yr_deforestation(to_filter, [3, 11, 11, 12, 12]);
-to_filter = run_4yr_deforestation(to_filter, [3, 21, 11, 11, 3]);
-to_filter = run_4yr_deforestation(to_filter, [3, 11, 4, 12, 3]);
-to_filter = run_4yr_deforestation(to_filter, [12, 11, 11, 3, 12]);
-to_filter = run_4yr_deforestation(to_filter, [12, 21, 21, 4, 4]);
-to_filter = run_4yr_deforestation(to_filter, [3, 11, 11, 4, 3]);
-to_filter = run_4yr_deforestation(to_filter, [4, 25, 12, 12, 12]);
-
-// 3 yr
-to_filter = run_3yr_deforestation(to_filter, [4, 25, 3, 4]);
-to_filter = run_3yr_deforestation(to_filter, [3, 21, 4, 3]);
-to_filter = run_3yr_deforestation(to_filter, [4, 11, 3, 4]);
-to_filter = run_3yr_deforestation(to_filter, [3, 11, 3, 3]);
-to_filter = run_3yr_deforestation(to_filter, [12, 25, 21, 21]);
-to_filter = run_3yr_deforestation(to_filter, [4, 12, 12, 4]);
-to_filter = run_3yr_deforestation(to_filter, [4, 12, 25, 4]);
-to_filter = run_3yr_deforestation(to_filter, [12, 25, 3, 12]);
-to_filter = run_3yr_deforestation(to_filter, [12, 25, 11, 12]);
-to_filter = run_3yr_deforestation(to_filter, [4, 25, 11, 4]);
-to_filter = run_3yr_deforestation(to_filter, [12, 11, 3, 12]);
-to_filter = run_3yr_deforestation(to_filter, [3, 25, 4, 3]);
-to_filter = run_3yr_deforestation(to_filter, [12, 25, 4, 12]);
-to_filter = run_3yr_deforestation(to_filter, [12, 4, 11, 12]);
-to_filter = run_3yr_deforestation(to_filter, [25, 12, 3, 3]);
-to_filter = run_3yr_deforestation(to_filter, [3, 11, 12, 12]);
-to_filter = run_3yr_deforestation(to_filter, [12, 3, 4, 12]);
-to_filter = run_3yr_deforestation(to_filter, [11, 12, 25, 11]);
-to_filter = run_3yr_deforestation(to_filter, [11, 25, 3, 3]);
-to_filter = run_3yr_deforestation(to_filter, [4, 12, 3, 4]);
-to_filter = run_3yr_deforestation(to_filter, [25, 12, 25, 25]);
-to_filter = run_3yr_deforestation(to_filter, [3, 21, 11, 11]);
-to_filter = run_3yr_deforestation(to_filter, [12, 11, 12, 12]);
-to_filter = run_3yr_deforestation(to_filter, [3, 4, 12, 12]);
-to_filter = run_3yr_deforestation(to_filter, [12, 21, 4, 4]);
-to_filter = run_3yr_deforestation(to_filter, [4, 3, 12, 4]);
-to_filter = run_3yr_deforestation(to_filter, [3, 11, 4, 3]);
-to_filter = run_3yr_deforestation(to_filter, [12, 4, 21, 12]);
-to_filter = run_3yr_deforestation(to_filter, [12, 21, 4 ,12]);
 
 ////////////////// filter first year 
 to_filter = run_3yr_first(12, to_filter);
@@ -335,9 +282,6 @@ to_filter = run_3yr_first(11, to_filter);
 
 ////////////////// filter last year
 to_filter = run_3yr_last(21, to_filter);
-
-
-
 
 // insert metadata
 print('filtered', to_filter);
