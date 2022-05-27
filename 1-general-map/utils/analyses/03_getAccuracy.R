@@ -28,7 +28,9 @@ file_name <- c(#'CERRADO_col7_gapfill_v1',
   #'CERRADO_col7_gapfill_incidence_temporal_spatial_v3'
   #'CERRADO_col7_gapfill_incidence_temporal_frequency_v3'
   #'CERRADO_col7_gapfill_incidence_temporal_frequency_v4'
-  'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_v5'
+  #'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_v5'
+  #'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_integration_v5'
+  'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_perturbance_v5'
   )
 
 ## set output path (local)
