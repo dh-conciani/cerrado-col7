@@ -6,11 +6,11 @@
 library(rgee)
 ee_Initialize()
 
-## define strings to use as metadata
-version <- "1"     ## version string
+## define strings to use as metadata (output)
+version <- "2"     ## version string
 
 ## define output directory
-dirout <- 'users/dh-conciani/collection7/training/v1/'
+dirout <- 'users/dh-conciani/collection7/training/v2/'
 
 ## biome
 biomes <- ee$Image('projects/mapbiomas-workspace/AUXILIAR/biomas-2019-raster')
@@ -28,6 +28,9 @@ regionsCollection <- ee$FeatureCollection('users/dh-conciani/collection7/classif
 
 ## import sample points
 samples <- ee$FeatureCollection('users/dh-conciani/collection7/sample/points/samplePoints_v7')
+
+## time since last fire
+fire_age <- ee$Image('users/dh-conciani/collection7/masks/fire_age')
 
 ## define regions to extract spectral signatures (spatial operator)
 regions_list <- unique(regionsCollection$aggregate_array('mapb')$getInfo())
@@ -96,11 +99,15 @@ for (i in 1:length(regions_list)) {
       
       ## get the amplitude
       amp_ndvi <- max_ndvi$subtract(min_ndvi)$rename('amp_ndvi_3yr')$clip(region_i);
+      
+      ## get the time since last fire
+      fire_age_i <- fire_age$select(paste0('classification_', years[j]))$rename('fire_age')$clip(region_i)
     }
     
     ## if the year[j] is lower than 1987, get null image as amp
     if (years[j] < 1987){
-      amp_ndvi <- ee$Image(0)$rename('amp_ndvi_3yr')$clip(region_i);
+      amp_ndvi <- ee$Image(0)$rename('amp_ndvi_3yr')$clip(region_i)
+      fire_age_i <- ee$Image(5)$rename('fire_age')$clip(region_i)
     }
     
     ## bind mapbiomas mosaic and auxiliary bands
@@ -109,11 +116,20 @@ for (i in 1:length(regions_list)) {
       addBands(lon_cos)$
       addBands(hand)$
       addBands(amp_ndvi)$
+      addBands(fire_age_i)$
       addBands(ee$Image(years[j])$int16()$rename('year'))
     
     ## subset sample points for the region 
     samples_ij <- samples$filterBounds(regionsCollection$filterMetadata('mapb', "equals", regions_list[i]))
     print(paste0('number of points: ', samples_ij$size()$getInfo()))      
+    
+    ## extract signatures
+    #training_i <- samples_ij$map(function(feature) {
+    #  feature$set(mosaic_i$reduceRegion(reducer='mean', 
+    #                                    geometry= feature$geometry(),
+    #                                    scale=30))
+    #    }
+    #  )
     
     ## get training samples
     training_i <- mosaic_i$sampleRegions(collection= samples_ij,
