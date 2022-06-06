@@ -6,8 +6,8 @@ library(rgee)
 ee_Initialize()
 
 ## define strings to be used as metadata
-samples_version <- '1'   # input training samples version
-output_version <-  '1'   # output classification version 
+samples_version <- '2'   # input training samples version
+output_version <-  '2'   # output classification version 
 
 ## define hyperparameters for then rf classifier
 n_tree <- 300
@@ -28,6 +28,9 @@ years <- unique(mosaic$aggregate_array('year')$getInfo())
 ## read classification regions (vetor)
 regions_vec <- ee$FeatureCollection('users/dh-conciani/collection7/classification_regions/vector')
 
+## time since last fire
+fire_age <- ee$Image('users/dh-conciani/collection7/masks/fire_age')
+
 ## define regions to be processed 
 regions_list <- sort(unique(regions_vec$aggregate_array('mapb')$getInfo()))
 
@@ -39,7 +42,7 @@ bands <- bands[- which(sapply(strsplit(bands, split='_', fixed=TRUE), function(x
                          sapply(strsplit(bands, split='_', fixed=TRUE), function(x) (x[1])) == 'shade') ]
 
 ## paste auxiliary bandnames
-aux_bands <- c('latitude', 'longitude_sin', 'longitude_cos', 'hand', 'amp_ndvi_3yr')
+aux_bands <- c('latitude', 'longitude_sin', 'longitude_cos', 'hand', 'amp_ndvi_3yr', 'fire_age')
 
 ## define assets
 ### training samples (prefix string)
@@ -103,12 +106,16 @@ for (i in 1:length(regions_list)) {
                                                   mosaic_i2$select('ndvi_median_wet')))$max()
       
       ## get the amplitude
-      amp_ndvi <- max_ndvi$subtract(min_ndvi)$rename('amp_ndvi_3yr')$clip(region_i_vec);
+      amp_ndvi <- max_ndvi$subtract(min_ndvi)$rename('amp_ndvi_3yr')$clip(region_i_vec)
+      
+      ## get the time since last fire
+      fire_age_i <- fire_age$select(paste0('classification_', years[j]))$rename('fire_age')$clip(region_i_vec)
     }
     
     ## if the year[j] is lower than 1987, get null image as amp
     if (years[j] < 1987){
-      amp_ndvi <- ee$Image(0)$rename('amp_ndvi_3yr')$clip(region_i_vec);
+      amp_ndvi <- ee$Image(0)$rename('amp_ndvi_3yr')$clip(region_i_vec)
+      fire_age_i <- ee$Image(5)$rename('fire_age')$clip(region_i)
     }
     
     ## bind mapbiomas mosaic and auxiliary bands
@@ -116,7 +123,8 @@ for (i in 1:length(regions_list)) {
       addBands(lon_sin)$
       addBands(lon_cos)$
       addBands(hand)$
-      addBands(amp_ndvi)
+      addBands(amp_ndvi)$
+      addBands(fire_age_i)
     
     ## limit water samples only to 175 samples (avoid over-estimation)
     water_samples <- ee$FeatureCollection(paste0(training_dir, 'v', samples_version, '/train_col7_reg', regions_list[i], '_', years[j], '_v', samples_version))$
