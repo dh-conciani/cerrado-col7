@@ -13,6 +13,7 @@
 
 ## 4_getSignatures.R:
   * Migration from python api to R api (rgee)
+  * inclusion of the time since the last fire as predictor
   * Inclusion of derived longitude geo-descriptors (sin, cos)
   * inclusion of HAND as predictor 
   * Inclusion the auxMosaics inside this step
