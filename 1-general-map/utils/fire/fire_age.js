@@ -85,7 +85,7 @@ var visParams = {
 Map.addLayer(fireAgeImage,visParams,'idade do fogo');
 Map.addLayer(scars.gte(1),{},'scars');
 
-var description = 'projects/mapbiomas-workspace/FOGO1/fire-age-v1';
+var description = 'users/dh-conciani/collection7/masks/fire_age';
 
 var bands = fireAgeImage.bandNames().slice(2);
 
@@ -101,7 +101,7 @@ var geometry = mask.geometry();
 
 Export.image.toAsset({
   image:image,
-  description:description,
+  description: 'fire_age',
   assetId:description,
   // pyramidingPolicy:,
   // dimensions:,
