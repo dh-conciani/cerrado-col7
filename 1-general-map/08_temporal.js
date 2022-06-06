@@ -262,7 +262,7 @@ to_filter = run_3yr_deforestation(to_filter, [12, 11, 21, 21]);
 
 
 ////////////// run time window general rules
-var class_ordering = [4, 3, 12, 11, 21, 33];
+var class_ordering = [21, 25, 33, 4, 12, 11, 3];
 
 class_ordering.forEach(function(class_i) {
   // 5 yr
@@ -275,9 +275,9 @@ class_ordering.forEach(function(class_i) {
 
 
 ////////////////// filter first year 
-to_filter = run_3yr_first(12, to_filter);
 to_filter = run_3yr_first(3, to_filter);
 to_filter = run_3yr_first(4, to_filter);
+to_filter = run_3yr_first(12, to_filter);
 to_filter = run_3yr_first(11, to_filter);
 
 ////////////////// filter last year
