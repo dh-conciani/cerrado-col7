@@ -115,7 +115,7 @@ for (i in 1:length(regions_list)) {
     ## if the year[j] is lower than 1987, get null image as amp
     if (years[j] < 1987){
       amp_ndvi <- ee$Image(0)$rename('amp_ndvi_3yr')$clip(region_i_vec)
-      fire_age_i <- ee$Image(5)$rename('fire_age')$clip(region_i)
+      fire_age_i <- ee$Image(5)$rename('fire_age')$clip(region_i_vec)
     }
     
     ## bind mapbiomas mosaic and auxiliary bands
