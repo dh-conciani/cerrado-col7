@@ -10,8 +10,8 @@ var geometry =
           [-40.31639240564828, -1.2109638051779688]]], null, false);
           
 // set metadata 
-var input_version = '1';
-var output_version = '1';
+var input_version = '2';
+var output_version = '2';
 
 // set directories
 var input = 'users/dh-conciani/collection7/c7-general';
@@ -135,7 +135,7 @@ var imageFilledYear = applyGapFill(imagePixelYear);
 
 // check filtered image
 print ('output classification', imageFilledtnt0);
-Map.addLayer(imageFilledtnt0.select('classification_2021'), vis, 'filtered');
+Map.addLayer(imageFilledtnt0.select('classification_2019'), vis, 'filtered');
 
 // write metadata
 imageFilledtnt0 = imageFilledtnt0.set('vesion', output_version);
