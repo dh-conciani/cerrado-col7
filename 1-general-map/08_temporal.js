@@ -5,10 +5,10 @@
 var root = 'users/dh-conciani/collection7/c7-general-post/';
 
 // set file to be processed
-var file_in = 'CERRADO_col7_gapfill_incidence_v1';
+var file_in = 'CERRADO_col7_gapfill_incidence_v6';
 
 // set metadata to export 
-var version_out = '1';
+var version_out = '6';
 
 // import mapbiomas color ramp
 var vis = {
@@ -272,7 +272,7 @@ to_filter = run_3yr_first(11, to_filter);
 to_filter = run_3yr_last(21, to_filter);
 
 ///////////////// filter middle years
-var class_ordering = [21, 25, 33, 4, 12, 11, 3];
+var class_ordering = [21, 25, 33, 4, 12, 3, 11];
 
 class_ordering.forEach(function(class_i) {
   // 5 yr
@@ -288,8 +288,8 @@ class_ordering.forEach(function(class_i) {
 print('filtered', to_filter);
 //to_filter = to_filter.set("version", version_out);
 
-Map.addLayer(classification.select(['classification_2010']), vis, 'classification 2010');
-Map.addLayer(to_filter.select(['classification_2010']), vis, 'filtered 2010');
+Map.addLayer(classification.select(['classification_2015']), vis, 'classification 2010');
+Map.addLayer(to_filter.select(['classification_2015']), vis, 'filtered 2010');
 
 Export.image.toAsset({
     'image': to_filter,
