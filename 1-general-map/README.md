@@ -24,7 +24,7 @@
   * mtry optimization (form sqrt(predictors) to 12)  
 
 ## 6_gapfill.js:
-  * no changes
+  * The filter has become more restrictive, changes only edge pixels that have had more than 19 changes over the series (50% of the time +1), does not change native vegetation packages 
 
 ## 7_incidence.js:
   * code optimization (from 240 to 83 lines)
