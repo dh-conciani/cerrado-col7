@@ -24,11 +24,11 @@
   * mtry optimization (form sqrt(predictors) to 12)  
 
 ## 6_gapfill.js:
-  * The filter has become more restrictive, changes only edge pixels that have had more than 19 changes over the series (50% of the time +1), does not change native vegetation packages 
+  * No changes
 
 ## 7_incidence.js:
   * code optimization (from 240 to 83 lines)
-  * dont use wetland as mode filter 
+  * The filter has become more restrictive, changes only edge pixels that have had more than 19 changes over the series (50% of the time +1), does not change native vegetation packages 
 
 ## 8_temporal.js:
   * rewriten to new sintax 
