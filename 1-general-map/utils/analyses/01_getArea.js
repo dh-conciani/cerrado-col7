@@ -20,7 +20,10 @@ var asset = [
   //root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_v4'
   // root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_v5'
   //root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_integration_v5'
-  root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_perturbance_v5'
+  //root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_perturbance_v5'
+  root + 'CERRADO_col7_gapfill_v2',
+  root + 'CERRADO_col7_gapfill_incidence_v6',
+  root + 'CERRADO_col7_gapfill_incidence_temporal_v6'
   ];
 
 // define classification regions 
