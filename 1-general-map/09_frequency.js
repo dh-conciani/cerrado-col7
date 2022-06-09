@@ -5,10 +5,10 @@
 var root = 'users/dh-conciani/collection7/c7-general-post/';
 
 // define input file 
-var file_in = 'CERRADO_col7_gapfill_incidence_temporal_v3';
+var file_in = 'CERRADO_col7_gapfill_incidence_temporal_v6';
 
 // define output version 
-var version_out = 3;
+var version_out = 6;
 
 // load classification
 var classification = ee.Image(root + file_in);
@@ -33,19 +33,29 @@ var filterFreq = function(image) {
   var savanna = image.eq(4).expression(exp);
   var wetland = image.eq(11).expression(exp);
   var grassland = image.eq(12).expression(exp);
+  var non_vegetated = image.eq(25).expression(exp);
 
   // select pixels that were native vegetation at least 95% of the time series
   var stable_native = ee.Image(0).where(forest
                                    .add(savanna)
                                    .add(wetland)
                                    .add(grassland)
-                                   .gte(90), 1);
+                                   .gte(95), 1);
+                                   
+  // select pixels that were native vegetation (or non vegetated) at least 95% of the time series
+    var stable_classes = ee.Image(0).where(forest
+                                   .add(savanna)
+                                   .add(wetland)
+                                   .add(grassland)
+                                   .add(non_vegetated)
+                                   .gte(95), 1);
 
   // stabilize native class when:
-  var filtered = ee.Image(0).where(stable_native.eq(1).and(forest.gte(75)), 3)
-                            .where(stable_native.eq(1).and(wetland.gte(50)), 11)
-                            .where(stable_native.eq(1).and(savanna.gt(50)), 4)
-                            .where(stable_native.eq(1).and(grassland.gt(50)), 12);
+  var filtered = ee.Image(0).where(stable_native.eq(1).and(forest.gte(60).and(classification.select(['classification_2021']).neq(3))), 3)
+                            .where(stable_native.eq(1).and(grassland.gt(60)), 12)
+                            .where(stable_classes.eq(1).and(savanna.gt(60)), 4)
+                            .where(stable_native.eq(1).and(wetland.gte(60)), 11);
+                            
 
   // get only pixels to be filtered
   filtered = filtered.updateMask(filtered.neq(0));
