@@ -20,7 +20,7 @@ file_path <- 'users/dh-conciani/collection7/c7-general-post/'
 # 'mapbiomas_collection60_integration_v1'
 # 'CERRADO_col6_gapfill_incid_temporal_spatial_freq_v8'
 file_name <- c(#'CERRADO_col7_gapfill_v1',
-  #'CERRADO_col7_gapfill_incidence_v1',
+  #CERRADO_col7_gapfill_incidence_v1',
   #'CERRADO_col7_gapfill_incidence_temporal_v1',
   #'CERRADO_col7_gapfill_incidence_temporal_v2',
   #'CERRADO_col7_gapfill_incidence_temporal_v3'
@@ -30,7 +30,11 @@ file_name <- c(#'CERRADO_col7_gapfill_v1',
   #'CERRADO_col7_gapfill_incidence_temporal_frequency_v4'
   #'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_v5'
   #'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_integration_v5'
-  'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_perturbance_v5'
+  #'CERRADO_col7_gapfill_incidence_temporal_frequency_spatial_perturbance_v5'
+  #'CERRADO_col7_gapfill_v2'
+  #'CERRADO_col7_gapfill_incidence_v6'
+  #'CERRADO_col7_gapfill_incidence_temporal_v6'
+  'CERRADO_col7_gapfill_incidence_temporal_frequency_v6'
   )
 
 ## set output path (local)
