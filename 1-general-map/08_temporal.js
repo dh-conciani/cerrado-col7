@@ -5,10 +5,10 @@
 var root = 'users/dh-conciani/collection7/c7-general-post/';
 
 // set file to be processed
-var file_in = 'CERRADO_col7_gapfill_incidence_v6';
+var file_in = 'CERRADO_col7_gapfill_incidence_v8';
 
 // set metadata to export 
-var version_out = '7';
+var version_out = '8';
 
 // import mapbiomas color ramp
 var vis = {
