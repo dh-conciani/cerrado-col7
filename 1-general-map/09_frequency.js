@@ -5,10 +5,10 @@
 var root = 'users/dh-conciani/collection7/c7-general-post/';
 
 // define input file 
-var file_in = 'CERRADO_col7_gapfill_incidence_temporal_v7';
+var file_in = 'CERRADO_col7_gapfill_incidence_temporal_v8';
 
 // define output version 
-var version_out = 7;
+var version_out = 8;
 
 // load classification
 var classification = ee.Image(root + file_in);
@@ -57,8 +57,8 @@ var filterFreq = function(image) {
 var classification_filtered = filterFreq(classification);
 
 // plot
-Map.addLayer(classification.select(['classification_2021']), vis, 'classification');
-Map.addLayer(classification_filtered.select(['classification_2021']), vis, 'filtered');
+Map.addLayer(classification.select(['classification_1990']), vis, 'classification');
+Map.addLayer(classification_filtered.select(['classification_1990']), vis, 'filtered');
 
 // export as GEE asset
 Export.image.toAsset({
