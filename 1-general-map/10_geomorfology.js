@@ -37,7 +37,7 @@ ee.List.sequence({'start': 1985, 'end': 2021}).getInfo()
     recipe = recipe.addBands(filtered_i);
   });
   
-//Map.addLayer(recipe.select(['classification_2021']), vis, 'filtered 2021');
+Map.addLayer(recipe.select(['classification_2021']), vis, 'filtered 2021');
 
 // export as GEE asset
 Export.image.toAsset({
