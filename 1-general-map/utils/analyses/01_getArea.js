@@ -28,7 +28,8 @@ var asset = [
   //root + 'CERRADO_col7_gapfill_incidence_temporal_v7'
   //root + 'CERRADO_col7_gapfill_incidence_v8'
   //root + 'CERRADO_col7_gapfill_incidence_temporal_v8'
-  root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_v8'
+  //root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_v8'
+   root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_v8'
   ];
 
 // define classification regions 
