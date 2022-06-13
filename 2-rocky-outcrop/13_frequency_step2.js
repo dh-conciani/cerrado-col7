@@ -8,7 +8,7 @@ var root = 'users/dh-conciani/collection7/c7-rocky-general-post/';
 var file_in = 'CERRADO_col7_rocky_gapfill_v2';
 
 // define output version 
-var version_out = 2;
+var version_out = 3;
 
 // load classification
 var classification = ee.Image(root + file_in);
@@ -33,8 +33,8 @@ var filterFreq = function(image) {
   Map.addLayer(rocky, {palette:['purple', 'red', 'orange', 'yellow', 'green', 'darkgreen'], min:20, max:70}, 'freq')
 
   // stabilize rocky when:
-  var filtered = ee.Image(0).where(rocky.gte(70), 29)
-                            .where(rocky.lt(70), 99)
+  var filtered = ee.Image(0).where(rocky.gte(90), 29)
+                            .where(rocky.lt(90), 99)
 
   // get only pixels to be filtered
   filtered = filtered.updateMask(filtered.neq(0));
@@ -48,7 +48,7 @@ var classification_filtered = filterFreq(classification);
 // plot
 Map.addLayer(classification.select(['classification_2021']), vis, 'classification');
 Map.addLayer(classification_filtered.select(['classification_2021']), vis, 'filtered');
-Map.addLayer(classification_filtered)
+
 // export as GEE asset
 Export.image.toAsset({
     'image': classification_filtered,
@@ -61,3 +61,5 @@ Export.image.toAsset({
     'scale': 30,
     'maxPixels': 1e13
 });
+
+Map.addLayer(table)
