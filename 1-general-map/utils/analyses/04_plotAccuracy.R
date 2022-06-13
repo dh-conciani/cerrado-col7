@@ -29,16 +29,23 @@ for (i in 1:length(files)) {
 ## get only accuracy
 global <- subset(recipe, variable == "Accuracy")
 
+## subset 
+#global <- subset(global, file == 'CERRADO_col7_gapfill_incidence_temporal_frequency_v8' |
+#                         file == 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_v8')
+
 ## plot summarized
 ggplot(data= global, mapping= aes(x= year, y= value, colour= file)) +
   stat_summary(fun='mean', geom= 'line', alpha= .6) +
   stat_summary(fun='mean', geom= 'point') +
-  scale_colour_manual(values=c('orange', 'red', 'black', 'green')) +
+  #scale_colour_manual(values=c('yellow', 'orange', 'red', 'black')) +
   theme_bw() +
   xlab(NULL) +
   ylab('Global accuracy')
 
-## get specific accuracies
+
+aggregate(x=list(acc=global$value), by=list(file=global$file), FUN= 'mean')
+
+# get specific accuracies
 per_class <- subset(recipe, variable == 'Class: 3' | variable == 'Class: 4' |
                       variable == 'Class: 12' | variable == 'Class: 21' | variable == 'Class: 33')
 
@@ -53,12 +60,27 @@ per_class$variable <- gsub('Class: 3', 'Forest',
                                         gsub('Class: 33', 'Water',
                                              gsub('Accuracy', 'Acc. global',
                                                   per_class$variable))))))
+
+## subset 
+per_class2 <- subset(per_class, file == 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_v8')
+
 ## plot
-ggplot(data= per_class, mapping= aes(x= year, y= value, colour= file)) +
+ggplot(data= per_class2, mapping= aes(x= year, y= value, colour= file)) +
   stat_summary(fun='mean', geom= 'line', alpha= .6) +
   stat_summary(fun='mean', geom= 'point') +
-  scale_colour_manual(values=c('orange', 'red', 'black', 'green')) +
+#  scale_colour_manual(values=c('red', 'gray50', 'gray70', 'black')) +
   facet_wrap(~variable, scales= 'free_y') +
+  theme_bw() +
+  xlab(NULL) +
+  ylab('Accuracy')
+
+
+## forest accuracy per region 
+ggplot(data= per_class, mapping= aes(x= year, y= value, colour= variable)) +
+  stat_summary(fun='mean', geom= 'line', alpha= .6) +
+  stat_summary(fun='mean', geom= 'point') +
+  scale_colour_manual('Version', values=c('black', '#E974ED', '#006400', '#B8AF4F', '#00ff00', '#0000FF')) +
+  facet_wrap(~region, scales= 'fixed') +
   theme_bw() +
   xlab(NULL) +
   ylab('Accuracy')
