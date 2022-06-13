@@ -8,7 +8,11 @@ library(ggplot2)
 ## avoid scientific notation
 options(scipen= 999)
 
-data <- read.csv('./table/accuracy/table_CERRADO_col7_gapfill_incidence_temporal_v1.csv')[-1]
+data <- read.csv('./table/accuracy/table_CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_spatial_v8.csv')[-1]
+
+## invert to solve issue on getAcc code
+colnames(data)[1] <- 'Reference'
+colnames(data)[2] <- 'Prediction'
 
 ## get agree
 agree <- subset(data, Prediction == Reference)
@@ -23,7 +27,7 @@ disagree_general <- aggregate(x=list(Freq= disagree$Freq),
 ## plot
 ggplot(data= disagree_general, mapping= aes(x=year, y= Freq, fill= as.factor(prediction))) +
   geom_bar(stat= 'identity') +
-  scale_fill_manual('Predicted', 
+  scale_fill_manual( 
                     labels=c('Forest', 'Savanna', 'Grassland/Wet', 'Farming', 'Non-vegetated', 'Water'),
                     values=c('#006400', '#00ff00', '#B8AF4F', '#f1c232', '#ff3d3d', '#0000FF')) +
   facet_wrap(~reference, scales= 'fixed') +
