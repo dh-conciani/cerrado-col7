@@ -3,7 +3,7 @@
 
 // import files
 var native = ee.Image('users/dh-conciani/collection7/c7-general-post/CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_spatial_v9');
-var rocky = ee.Image('users/dh-conciani/collection7/c7-rocky-general-post/CERRADO_col7_rocky_gapfill_frequency_v3');
+var rocky = ee.Image('users/dh-conciani/collection7/c7-rocky-general-post/CERRADO_col7_rocky_gapfill_frequency_spatial_v3');
 var biome = ee.Image('projects/mapbiomas-workspace/AUXILIAR/biomas-2019-raster');
 
 // import mapbiomas color ramp
@@ -16,6 +16,17 @@ var vis = {
 // create recipe
 var recipe = ee.Image([]);
 
+// chapada dos veadeiros
+var geometry_veadeiros = 
+    ee.Image(1).clip(ee.FeatureCollection(ee.Geometry.Polygon(
+        [[[-47.91136858164175, -13.828379924704489],
+          [-47.91136858164175, -14.275996243879357],
+          [-47.28377458750113, -14.275996243879357],
+          [-47.28377458750113, -13.828379924704489]]], null, false)));
+          
+// create mask
+var mask = biome.updateMask(biome.eq(4)).where(geometry_veadeiros.eq(1), 1);
+
 // integrate
 ee.List.sequence({'start': 1985, 'end': 2021}).getInfo()
   .forEach(function(year_i) {
@@ -24,7 +35,7 @@ ee.List.sequence({'start': 1985, 'end': 2021}).getInfo()
     var rocky_i = rocky.select(['classification_' + year_i]);
     
     // integrate
-    var integrated_i = native_i.where(rocky_i.eq(29), 29);
+    var integrated_i = native_i.where(rocky_i.eq(29).and(mask.neq(1)), 29);
     
     // apply a post-integration spatial filter
     // compute the focal model
