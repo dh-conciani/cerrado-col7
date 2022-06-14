@@ -5,10 +5,10 @@
 var root = 'users/dh-conciani/collection7/c7-rocky-general-post/';
 
 // define input file 
-var file_in = 'CERRADO_col7_rocky_gapfill_frequency_v2';
+var file_in = 'CERRADO_col7_rocky_gapfill_frequency_v3';
 
 // define output version 
-var version_out = 2;
+var version_out = 3;
 
 // read image
 var classification = ee.Image(root + file_in);
