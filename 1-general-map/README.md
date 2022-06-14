@@ -28,7 +28,6 @@
 
 ## 7_incidence.js:
   * code optimization (from 240 to 83 lines)
-  * The filter has become more restrictive, changes only edge pixels that have had more than 19 changes over the series (50% of the time +1), does not change native vegetation packages 
 
 ## 8_temporal.js:
   * rewriten to new sintax 
@@ -38,6 +37,8 @@
  ## 9_frequency.js:
   * stabilize pixels that are native vegetation for at least 95% of the time
 
+ ## 10_geomorfology.js:
+  * use geomorfology from IBGE (2009)- "Plano de inundação" - to optimize wetlands classification in Araguaia basin 
  
  ## 10_spatial.js:
   * double filtering
