@@ -63,7 +63,7 @@ years.forEach(
 
         imageYear = imageYear
             .set('territory', 'BRAZIL')
-            .set('theme', 'CERRADO')
+            .set('biome', 'CERRADO')
             .set('year', parseInt(year, 10))
             .set('version', outputVersion)
             .set('collection', collectionId)
@@ -86,6 +86,12 @@ years.forEach(
         }
         
         print(imageYear);
+        
+        // perform reclassification of mosaic of agriculture and pasture to pasture into protected areas
+        // except in APAs
+        
+        
+        
 
         Export.image.toAsset({
             'image': imageYear,
