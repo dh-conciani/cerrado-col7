@@ -77,9 +77,7 @@ years.forEach(
             'format': 'png'
         };
 
-        Map.addLayer(imageYear, vis, theme.name + ' ' + year, false);
-
-        var name = year + '-' + outputVersion;
+       var name = year + '-' + outputVersion;
 
         if (theme.type === 'biome') {
             name = theme.name + '-' + name;
@@ -87,11 +85,18 @@ years.forEach(
         
         print(imageYear);
         
-        // perform reclassification of mosaic of agriculture and pasture to pasture into protected areas
-        // except in APAs
+        // perform reclassification of mosaic of agriculture and pasture to pasture into protected areas (except APAs and TIs)
+        // build mask
+        // import protected areas
+        var pa = ee.Image(1).clip(
+                    ee.FeatureCollection('projects/mapbiomas-workspace/AUXILIAR/areas-protegidas')
+                            .filterMetadata('categoria', 'not_equals', 'APA')
+                            .filterMetadata('categoria', 'not_equals', ''));
+
+        // remap
+        imageYear = imageYear.where(imageYear.eq(21).and(pa.eq(1)), 15);
         
-        
-        
+        Map.addLayer(imageYear, vis, theme.name + ' ' + year, false);
 
         Export.image.toAsset({
             'image': imageYear,
