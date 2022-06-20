@@ -30,18 +30,22 @@ for (i in 1:length(files)) {
 global <- subset(recipe, variable == "Accuracy")
 
 ## subset 
-#global <- subset(global, file == 'CERRADO_col7_gapfill_incidence_temporal_frequency_v8' |
-#                         file == 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_v8')
+global <- subset(global, file== 'CERRADO_col7_gapfill_v2' |
+                   file== 'CERRADO_col7_gapfill_incidence_v8' |
+                   file== 'CERRADO_col7_gapfill_incidence_temporal_v8' |
+                   file== 'CERRADO_col7_gapfill_incidence_temporal_frequency_v8'|
+                   file== 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_v8' |
+                   file== 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_spatial_v9' |
+                   file== 'CERRADO_col7_pseudo_v9')
 
 ## plot summarized
 ggplot(data= global, mapping= aes(x= year, y= value, colour= file)) +
   stat_summary(fun='mean', geom= 'line', alpha= .6) +
   stat_summary(fun='mean', geom= 'point') +
-  #scale_colour_manual(values=c('yellow', 'orange', 'red', 'black')) +
+  scale_colour_manual(values=c('darkgreen', 'green', 'yellow', 'orange', 'red', 'purple', 'blue')) +
   theme_bw() +
   xlab(NULL) +
   ylab('Global accuracy')
-
 
 aggregate(x=list(acc=global$value), by=list(file=global$file), FUN= 'mean')
 
@@ -62,7 +66,7 @@ per_class$variable <- gsub('Class: 3', 'Forest',
                                                   per_class$variable))))))
 
 ## subset 
-per_class2 <- subset(per_class, file == 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_v8')
+per_class2 <- subset(per_class, file == 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_spatial_v9')
 
 ## plot
 ggplot(data= per_class2, mapping= aes(x= year, y= value, colour= file)) +
