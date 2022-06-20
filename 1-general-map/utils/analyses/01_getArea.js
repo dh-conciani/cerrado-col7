@@ -31,7 +31,9 @@ var asset = [
   //root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_v8'
   //root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_v8'
    //root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_spatial_v8'
-   root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_spatial_v9'
+   //root + 'CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_spatial_v9'
+   root + 'CERRADO_col7_pseudo_v9',
+   root + 'CERRADO_col7_pseudoRocky_v9'
   ];
 
 // define classification regions 
