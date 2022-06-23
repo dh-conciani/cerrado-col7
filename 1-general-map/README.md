@@ -31,7 +31,7 @@
 
 ## 8_temporal.js:
   * rewriten to new sintax 
-  * rules reviewed and optimized following cerrado ecology
+  * rules reviewed and optimized
   * wetlands included 
  
  ## 9_frequency.js:
