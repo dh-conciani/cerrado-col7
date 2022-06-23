@@ -35,7 +35,7 @@
   * wetlands included 
  
  ## 9_frequency.js:
-  * stabilize pixels that are native vegetation for at least 95% of the time
+  * stabilize pixels that are native vegetation for at least 90% of the time
 
  ## 10_geomorfology.js:
   * use geomorfology from IBGE (2009)- "Plano de inundação" - to optimize wetlands classification in Araguaia basin 
