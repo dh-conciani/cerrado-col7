@@ -23,7 +23,7 @@ var image = ee.ImageCollection(input)
             .filterMetadata('version', 'equals', input_version)
             .mosaic();
 
-// mask and discard values equal to zero
+// discard zero
 image = image.mask(image.neq(0));
 print('input classification', image);
 
