@@ -2,7 +2,7 @@
 // dhemerson.costa@ipam.org.br
 
 // import files
-var native = ee.Image('users/dh-conciani/collection7/c7-general-post/CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_spatial_v9');
+var native = ee.Image('users/dh-conciani/collection7/c7-general-post/CERRADO_col7_gapfill_incidence_temporal_frequency_geomorfology_spatial_v30');
 var rocky = ee.Image('users/dh-conciani/collection7/c7-rocky-general-post/CERRADO_col7_rocky_gapfill_frequency_spatial_v3');
 var biome = ee.Image('projects/mapbiomas-workspace/AUXILIAR/biomas-2019-raster');
 
@@ -72,8 +72,8 @@ var root = 'users/dh-conciani/collection7/c7-general-post/';
 // export as GEE asset
 Export.image.toAsset({
     'image': recipe,
-    'description': 'CERRADO_col7_native9_rocky3',
-    'assetId': root + 'CERRADO_col7_native9_rocky3',
+    'description': 'CERRADO_col7_native30_rocky3',
+    'assetId': root + 'CERRADO_col7_native30_rocky3',
     'pyramidingPolicy': {
         '.default': 'mode'
     },
