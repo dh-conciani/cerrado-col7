@@ -108,7 +108,7 @@ var palette = require('users/mapbiomas/modules:Palettes.js').get('classification
 
 // Defina seu asset de entrada
 var assetInput = 'users/dh-conciani/collection7/c7-general-post';
-var file_name = 'CERRADO_col7_native9_rocky3';
+var file_name = 'CERRADO_col7_native30_rocky3';
 
 // Carregue a sua coleção aqui
 var collection = ee.Image(assetInput + '/' + file_name);
@@ -117,10 +117,20 @@ var collection = ee.Image(assetInput + '/' + file_name);
 var assetOutput = 'projects/mapbiomas-workspace/COLECAO7/classificacao';
 
 // Defina a versão de saída
-var outputVersion = '3';
+var outputVersion = '7';
 
 // Defina o id de lançamento da coleção mapbiomas
-var collectionId = 7.0;
+var collectionId = 7.1;
+
+// asset mata atlantica
+var MA = ee.Image('projects/mapbiomas-workspace/COLECAO7/pos-classificacao-ma/MA_p11c_RF85a21_v54');
+        
+// asset col6
+var col6 = ee.Image('projects/mapbiomas-workspace/public/collection6/mapbiomas_collection60_integration_v1');
+      
+// biomas
+var biomes = ee.Image('projects/mapbiomas-workspace/AUXILIAR/biomas-2019-raster');
+      Map.addLayer(biomes.randomVisualizer())
 
 // Se for bioma use este.
 var theme = { 'type': 'biome', 'name': 'CERRADO' };
@@ -203,10 +213,20 @@ years.forEach(
         // remap 11 into mask to 12
         imageYear = imageYear.where(imageYear.eq(11).and(wetland_to_grassland.eq(1)), 12);
         imageYear = imageYear.where(imageYear.eq(11).and(wetland_to_grassland2.eq(1)), 12);
-
         
+        // plot
+        //Map.addLayer(imageYear, vis, theme.name + ' ' + year, false);
+        
+        // fill gaps of cerrado with mata atlantica data
+        var MA_i = MA.select(['classification_' + year]);
+          
+        // fill
+        var cerrado_i = imageYear.unmask();
+        imageYear = cerrado_i.where(cerrado_i.eq(0).and(biomes.eq(4)), MA_i).updateMask(biomes.eq(4));
+ 
         Map.addLayer(imageYear, vis, theme.name + ' ' + year, false);
-
+        
+        // export to asset
         Export.image.toAsset({
             'image': imageYear,
             'description': name,
